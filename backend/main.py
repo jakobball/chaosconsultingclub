@@ -9,6 +9,8 @@ from dotenv import load_dotenv
 # Lade Umgebungsvariablen aus backend/.env
 load_dotenv()
 
+
+#Test
 app = FastAPI()
 
 # CORS Middleware für Frontend-URLs
