@@ -13,7 +13,7 @@ app = FastAPI()
 
 # Hole erlaubte Frontend-URL aus .env oder nutze Standard
 origins = [
-    os.getenv("FRONTEND_ORIGIN", "https://chaosconsultingclub.vercel.app/")
+    os.getenv("FRONTEND_ORIGIN", "https://chaosconsultingclub.vercel.app")
 ]
 
 # CORS Middleware einrichten
