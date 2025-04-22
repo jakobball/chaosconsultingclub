@@ -9,10 +9,11 @@ from dotenv import load_dotenv
 # Lade Umgebungsvariablen aus backend/.env
 load_dotenv()
 
+
+#Test
 app = FastAPI()
 
-#TEST
-
+# CORS Middleware für Frontend-URLs
 # Hole erlaubte Frontend-URL aus .env oder nutze Standard
 origins = [
     os.getenv("FRONTEND_ORIGIN", "https://chaosconsultingclub.vercel.app")
