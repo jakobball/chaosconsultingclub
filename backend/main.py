@@ -3,13 +3,20 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
+import os
+from dotenv import load_dotenv
+
+# Lade Umgebungsvariablen aus backend/.env
+load_dotenv()
 
 app = FastAPI()
 
+# Hole erlaubte Frontend-URL aus .env oder nutze Standard
 origins = [
-    "http://localhost:5173"  # dein React-Frontend
+    os.getenv("FRONTEND_ORIGIN", "http://localhost:5173")
 ]
 
+# CORS Middleware einrichten
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -25,7 +32,7 @@ class Item(BaseModel):
 class Items(BaseModel):
     items: List[Item]
 
-# In-memory DB
+# In-Memory-Datenbank
 memory_db = {"items": []}
 
 @app.get("/", response_model=Items)
@@ -36,7 +43,6 @@ def get_items() -> Items:
 def put_item(item: Item) -> Item:
     memory_db["items"].append(item)
     return item
-
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8002)
