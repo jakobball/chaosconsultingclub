@@ -1,0 +1,124 @@
+.customer-overview-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: var(--dark-gray, #1e1e1e);
+  border-radius: var(--radius, 12px);
+  box-shadow: var(--shadow, 0 4px 8px rgba(0, 0, 0, 0.25));
+  color: var(--white, #ffffff);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.customer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.customer-header h1 {
+  margin: 0;
+  color: var(--white, #ffffff);
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.customer-industry-badge {
+  background-color: rgba(62, 211, 174, 0.1);
+  color: var(--mint-400, #3ED3AE);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-full, 9999px);
+  font-weight: 500;
+  font-size: 0.9rem;
+  border: 1px solid rgba(62, 211, 174, 0.3);
+}
+
+.customer-details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.customer-detail-card {
+  background-color: var(--lighter-gray, #2d2d2d);
+  border-radius: var(--radius, 12px);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm, 0 2px 4px rgba(0, 0, 0, 0.2));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: var(--transition, all 0.2s ease);
+}
+
+.customer-detail-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg, 0 8px 16px rgba(0, 0, 0, 0.3));
+}
+
+.customer-detail-card h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: var(--mint-400, #3ED3AE);
+  font-size: 1.2rem;
+  border-bottom: 2px solid rgba(62, 211, 174, 0.3);
+  padding-bottom: 0.5rem;
+}
+
+.detail-item {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-label {
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 0.25rem;
+  font-size: 0.9rem;
+}
+
+.detail-value {
+  color: var(--white, #ffffff);
+  font-size: 1.1rem;
+}
+
+.website-link {
+  color: var(--mint-400, #3ED3AE);
+  text-decoration: none;
+}
+
+.website-link:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .customer-details-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .customer-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .customer-industry-badge {
+    margin-top: 0.5rem;
+  }
+  
+  .customer-overview-container {
+    padding: 1rem;
+    margin: 1rem;
+  }
+}
+
+@media (max-width: 500px) {
+  .customer-overview-container {
+    padding: 0.5rem;
+    margin: 0.5rem;
+  }
+  
+  .customer-detail-card {
+    padding: 1rem;
+  }
+}

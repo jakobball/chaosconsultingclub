@@ -13,27 +13,27 @@ const ProjectsPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
-  // Dummy-Projekt für Vorschau
+  // Dummy projects for preview
   const dummyProjects = [
     {
       id: 'dummy-1',
-      title: 'Webseiten-Optimierung für StartupX',
-      subtitle: 'UX/UI Redesign für Startup im FinTech-Bereich',
-      description: 'Ein junges FinTech-Startup benötigt Hilfe bei der Optimierung ihrer Webseite. Das Ziel ist es, die Conversion-Rate zu erhöhen und die Nutzererfahrung zu verbessern.',
+      title: 'Website Optimization for StartupX',
+      subtitle: 'UX/UI Redesign for FinTech Startup',
+      description: 'A young FinTech startup needs assistance with optimizing their website. The goal is to increase conversion rates and improve user experience.',
       status: 'planned'
     },
     {
       id: 'dummy-2',
-      title: 'KI-gestütztes Matching-System',
-      subtitle: 'Automatisierung des Consultant-Matching-Prozesses',
-      description: 'Entwicklung eines intelligenten Systems zur Optimierung der Berater-Projekt-Zuordnung durch maschinelles Lernen.',
+      title: 'AI-Powered Matching System',
+      subtitle: 'Automation of Consultant Matching Process',
+      description: 'Development of an intelligent system to optimize consultant-project allocation through machine learning.',
       status: 'active'
     },
     {
       id: 'dummy-3',
-      title: 'Digitale Marktanalyse',
-      subtitle: 'Analyse des europäischen E-Commerce Marktes',
-      description: 'Durchführung einer umfassenden Marktanalyse für einen E-Commerce-Anbieter mit Schwerpunkt auf Wachstumsmöglichkeiten in verschiedenen europäischen Ländern.',
+      title: 'Digital Market Analysis',
+      subtitle: 'Analysis of European E-Commerce Market',
+      description: 'Conducting a comprehensive market analysis for an e-commerce provider with focus on growth opportunities in various European countries.',
       status: 'completed'
     }
   ];
@@ -89,6 +89,7 @@ const ProjectsPage = () => {
   };
   
   const handleCreateProject = () => {
+    // Navigate directly to the upload project page
     navigate('/project/new');
   };
 
@@ -96,7 +97,7 @@ const ProjectsPage = () => {
     <div className="projects-page">
       <div className="projects-container">
         <div className="header-container">
-          <h1>Chaos Consulting Club Projekte</h1>
+          <h1>Chaos Consulting Club Projects</h1>
           <button 
             className="create-project-btn"
             onClick={handleCreateProject}
@@ -121,7 +122,7 @@ const ProjectsPage = () => {
         {error && <div className="error-message">{error}</div>}
 
         {loading ? (
-          <div className="loading">Projekte werden geladen...</div>
+          <div className="loading">Loading projects...</div>
         ) : (
           <div className="projects-list">
             {filteredProjects.length > 0 ? (
@@ -146,7 +147,7 @@ const ProjectsPage = () => {
                 </div>
               ))
             ) : (
-              <div className="no-projects">Keine Projekte gefunden.</div>
+              <div className="no-projects">No projects found.</div>
             )}
           </div>
         )}

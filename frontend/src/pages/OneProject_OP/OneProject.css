@@ -152,22 +152,43 @@
 }
 
 .project-description-section h3,
-.project-goals-section h3 {
+.project-goals-section h3,
+.project-skills-section h3,
+.project-priorities-section h3 {
   color: var(--mint-400);
   margin-top: 0;
   margin-bottom: 0.8rem;
   font-size: 1.2rem;
 }
 
-.project-description-section p {
+.project-description-section p,
+.project-priorities-section p {
   color: var(--white);
   opacity: 0.9;
   line-height: 1.6;
   margin: 0;
 }
 
-.project-goals-section {
+.project-goals-section,
+.project-skills-section,
+.project-priorities-section {
   margin-top: 1.5rem;
+}
+
+.skills-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.skills-tags .skill-tag {
+  background-color: rgba(62, 211, 174, 0.1);
+  color: var(--mint-400);
+  font-size: 0.9rem;
+  padding: 0.3rem 0.8rem;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(62, 211, 174, 0.2);
 }
 
 .project-goals-section ul {
