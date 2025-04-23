@@ -25,8 +25,17 @@ def create_project(db: Session, project_data: ProjectCreate):
     return new_project
 
 
+import json
+
 def get_all_projects(db: Session):
-    return db.query(Project).all()
+    projects = db.query(Project).all()
+    for p in projects:
+        if isinstance(p.requirements, str):
+            try:
+                p.requirements = json.loads(p.requirements)
+            except Exception:
+                p.requirements = []
+    return projects
 
 
 def delete_project_by_id(db: Session, project_id: int):

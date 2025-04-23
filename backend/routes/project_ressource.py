@@ -2,6 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from config.db import SessionLocal
 from schemes.project import ProjectCreate, ProjectOut
+from schemes.project_with_customer import ProjectAndCustomerCreate
+from service.customer_service import create_customer
 from service.project_service import (
     create_project,
     get_all_projects,
@@ -22,8 +24,13 @@ def get_db():
 
 # Add a new project
 @router.post("/add", response_model=ProjectOut)
-def add_project(project: ProjectCreate, db: Session = Depends(get_db)):
-    return create_project(db, project)
+def add_project(data: ProjectAndCustomerCreate, db: Session = Depends(get_db)):
+    # Zuerst Kunde erstellen
+    customer = create_customer(db, data.customer)
+    # Dann Kunde-ID ins Projekt setzen
+    data.project.customer_id = customer.id
+    # Projekt erstellen
+    return create_project(db, data.project)
 
 # Get all projects
 @router.get("/all", response_model=List[ProjectOut])

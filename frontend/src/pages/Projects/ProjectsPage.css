@@ -63,13 +63,13 @@ h1 {
   color: #555;
 }
 
-.filter-button[data-status="open"] {
+.filter-button[data-status="planned"] {
   background-color: #f0f9ff;
   border-color: #0077cc;
   color: #0077cc;
 }
 
-.filter-button[data-status="in_progress"] {
+.filter-button[data-status="active"] {
   background-color: #fff8e6;
   border-color: #f59e0b;
   color: #f59e0b;
@@ -145,7 +145,7 @@ h1 {
 .project-item h2 {
   color: #333;
   margin: 0;
-  font-size: 1.3rem;
+  font-size: 1.1rem; /* Kleinere Schriftgröße (von 1.3rem) */
 }
 
 .project-item h3 {
@@ -161,6 +161,11 @@ h1 {
   margin-bottom: 1rem;
   line-height: 1.5;
   flex-grow: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* Beschränkung auf 2 Zeilen */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .project-status {
@@ -172,12 +177,12 @@ h1 {
   white-space: nowrap;
 }
 
-.status-open {
+.status-planned {
   background-color: #f0f9ff;
   color: #0077cc;
 }
 
-.status-progress {
+.status-active {
   background-color: #fff8e6;
   color: #f59e0b;
 }
