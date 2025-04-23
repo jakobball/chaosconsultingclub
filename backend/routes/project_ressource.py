@@ -8,7 +8,8 @@ from service.project_service import (
     create_project,
     get_all_projects,
     delete_project_by_id,
-    update_project_by_id
+    update_project_by_id,
+    get_project_by_id
 )
 from typing import List
 
@@ -46,3 +47,7 @@ def delete_project(project_id: int, db: Session = Depends(get_db)):
 @router.put("/edit/{project_id}", response_model=ProjectOut)
 def update_project(project_id: int, updated_data: ProjectCreate, db: Session = Depends(get_db)):
     return update_project_by_id(db, project_id, updated_data)
+# Get a single project by ID
+@router.get("/{project_id}", response_model=ProjectOut)
+def read_project(project_id: int, db: Session = Depends(get_db)):
+    return get_project_by_id(db, project_id)

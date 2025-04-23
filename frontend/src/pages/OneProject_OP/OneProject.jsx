@@ -1,10 +1,41 @@
 // frontend/src/pages/OneProject/OneProject.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import ConsultantCard from '../../components/ConsultantCard/ConsultantCard';
 import StatusBadge from '../../components/StatusBadge/StatusBadge';
 import './OneProject.css';
+
+const parseBudget = (budgetValue) => {
+  if (typeof budgetValue === 'number') return budgetValue;
+  if (!budgetValue) return 0;
+
+  // Entferne Währungssymbole und Tausendertrennzeichen, ersetze Komma durch Punkt
+  const numStr = budgetValue.toString()
+    .replace(/[^\d,.-]/g, '')
+    .replace(/\./g, '')
+    .replace(',', '.');
+
+  const parsed = parseFloat(numStr);
+  return isNaN(parsed) ? 0 : parsed;
+};
+
+const formatApiDate = (dateString) => {
+  if (!dateString) return new Date().toISOString().split('T')[0];
+
+  if (/^\d{4}-\d{2}-\d{2}/.test(dateString)) return dateString;
+
+  try {
+    const parts = dateString.split('.');
+    if (parts.length === 3) {
+      return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+    }
+  } catch (e) {
+    console.warn("Date parsing failed:", e);
+  }
+
+  return new Date().toISOString().split('T')[0];
+};
 
 const OneProject = () => {
   const { id } = useParams();
@@ -14,127 +45,47 @@ const OneProject = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [newConsultant, setNewConsultant] = useState('');
+  const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
+  const [updatingStatus, setUpdatingStatus] = useState(false);
+  const statusDropdownRef = useRef(null);
 
-  // Beispiel-Projektdaten falls keine Verbindung zur API besteht
-  const dummyProjects = {
-    'dummy-1': {
-      id: 'dummy-1',
-      title: 'Webseiten-Optimierung für StartupX',
-      subtitle: 'UX/UI Redesign für Startup im FinTech-Bereich',
-      status: 'open',
-      description: 'Ein junges FinTech-Startup benötigt Hilfe bei der Optimierung ihrer Webseite. Das Ziel ist es, die Conversion-Rate zu erhöhen und die Nutzererfahrung zu verbessern. Wir suchen nach Studierenden mit Erfahrung in UX/UI Design und Webentwicklung.',
-      client: 'FinTech GmbH',
-      timeline: '6 Wochen',
-      budget: '15.000 €',
-      startDate: '15.09.2023',
-      endDate: '30.10.2023',
-      goals: [
-        'Erhöhung der Conversion-Rate um 30%',
-        'Verbesserung der Nutzererfahrung',
-        'Optimierung der mobilen Ansicht'
-      ]
-    },
-    'dummy-2': {
-      id: 'dummy-2',
-      title: 'KI-gestütztes Matching-System',
-      subtitle: 'Automatisierung des Consultant-Matching-Prozesses',
-      status: 'in_progress',
-      description: 'Entwicklung eines intelligenten Systems, das Consultants basierend auf ihren Fähigkeiten, Erfahrungen und Verfügbarkeit optimal mit Kundenprojekten matcht.',
-      client: 'TechVision GmbH',
-      timeline: '3 Monate',
-      budget: '85.000 €',
-      startDate: '01.06.2023',
-      endDate: '31.08.2023',
-      goals: [
-        'Entwicklung eines Algorithmus für optimales Consultant-Matching',
-        'Integrierte Analyse von Fähigkeiten und Projekterfahrungen',
-        'Implementierung einer benutzerfreundlichen Dashboard-Oberfläche',
-        'Automatisierte Empfehlungen für Projektteams'
-      ]
-    },
-    'dummy-3': {
-      id: 'dummy-3',
-      title: 'Digitale Marktanalyse',
-      subtitle: 'Analyse des europäischen E-Commerce Marktes',
-      status: 'completed',
-      description: 'Durchführung einer umfassenden Marktanalyse für einen E-Commerce-Anbieter mit Schwerpunkt auf Wachstumsmöglichkeiten in verschiedenen europäischen Ländern.',
-      client: 'Euro Shop AG',
-      timeline: '2 Monate',
-      budget: '40.000 €',
-      startDate: '15.03.2023',
-      endDate: '15.05.2023',
-      goals: [
-        'Identifikation von Wachstumsmärkten in Europa',
-        'Analyse von Wettbewerbern und Marktanteilen',
-        'Entwicklung von Handlungsempfehlungen'
-      ]
-    }
+  const statusOptions = [
+    { value: 'planned', label: 'Planned' },
+    { value: 'active', label: 'Active' },
+    { value: 'completed', label: 'Completed' }
+  ];
+
+  const formatDate = (isoDate) => {
+    const date = new Date(isoDate);
+    return date.toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
   };
 
-  // Beispiel-Consultants für jedes Projekt
-  const dummyConsultantsByProject = {
-    'dummy-1': [
-      {
-        id: "c1",
-        name: "Emma Schneider",
-        role: "UX/UI Designer",
-        experience: "5 Jahre",
-        skills: ["User Research", "Figma", "Prototyping"],
-        avatar: "https://randomuser.me/api/portraits/women/68.jpg"
-      },
-      {
-        id: "c2",
-        name: "Maximilian Berger",
-        role: "Full-Stack Developer",
-        experience: "6 Jahre",
-        skills: ["React", "Node.js", "TypeScript"],
-        avatar: "https://randomuser.me/api/portraits/men/42.jpg"
+  const formatCurrency = (value) => {
+    if (typeof value === 'string' && value.includes('€')) {
+      return value;
+    }
+
+    const numericValue = typeof value === 'string'
+      ? value.replace(/[^\d,]/g, '').replace(',', '.')
+      : value;
+
+    try {
+      const number = parseFloat(numericValue);
+      if (!isNaN(number)) {
+        return new Intl.NumberFormat('en-GB', {
+          style: 'currency',
+          currency: 'EUR'
+        }).format(number);
       }
-    ],
-    'dummy-2': [
-      {
-        id: "c3",
-        name: "Sophia Wagner",
-        role: "Senior Data Scientist",
-        experience: "8 Jahre",
-        skills: ["Machine Learning", "Python", "Data Analysis"],
-        avatar: "https://randomuser.me/api/portraits/women/33.jpg"
-      },
-      {
-        id: "c4",
-        name: "Julian Müller",
-        role: "DevOps Engineer",
-        experience: "7 Jahre",
-        skills: ["AWS", "Docker", "Kubernetes"],
-        avatar: "https://randomuser.me/api/portraits/men/29.jpg"
-      },
-      {
-        id: "c5",
-        name: "Laura Fischer",
-        role: "Project Manager",
-        experience: "9 Jahre",
-        skills: ["Agile", "Scrum", "Risk Management"],
-        avatar: "https://randomuser.me/api/portraits/women/17.jpg"
-      }
-    ],
-    'dummy-3': [
-      {
-        id: "c6",
-        name: "Thomas Klein",
-        role: "Market Research Analyst",
-        experience: "10 Jahre",
-        skills: ["Market Analysis", "SPSS", "Consumer Behavior"],
-        avatar: "https://randomuser.me/api/portraits/men/52.jpg"
-      },
-      {
-        id: "c7",
-        name: "Alexandra Weber",
-        role: "Business Consultant",
-        experience: "12 Jahre",
-        skills: ["Strategy", "Business Development", "E-Commerce"],
-        avatar: "https://randomuser.me/api/portraits/women/23.jpg"
-      }
-    ]
+    } catch (e) {
+      console.error('Error formatting budget:', e);
+    }
+
+    return value;
   };
 
   useEffect(() => {
@@ -146,40 +97,46 @@ const OneProject = () => {
 
       try {
         const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8002';
+        const projectResponse = await axios.get(`${apiUrl}/project/${id}`);
+        const loadedProject = projectResponse.data;
 
-        // Projekt laden
-      //  const projectResponse = await axios.get(`${apiUrl}/projects/${id}`);
-        //setProject(projectResponse.data);
+        setProject({
+          ...loadedProject,
+          subtitle: loadedProject.customer_priorities || '',
+          client: loadedProject.customer_id ? `Client #${loadedProject.customer_id}` : 'Unknown',
+          startDate: formatDate(loadedProject.start_date),
+          endDate: formatDate(loadedProject.end_date),
+          goals: loadedProject.requirements?.map(r => `${r.skill} (${r.recommendedSeniority}) x${r.amount}`) || []
+        });
 
-        // Consultants für das Projekt laden
-        //const consultantsResponse = await axios.get(`${apiUrl}/projects/${id}/consultants`);
-        //setConsultants(consultantsResponse.data.consultants);
-
-        setLoading(false);
+        setConsultants([]);
         setError(null);
+        setLoading(false);
       } catch (error) {
-        console.error('Fehler beim Laden der Projektdaten:', error);
-        setError('API-Verbindungsfehler. Zeige Demo-Daten.');
-
-        // Fallback zu Dummy-Daten
-        if (id.startsWith('dummy-')) {
-          setProject(dummyProjects[id]);
-          setConsultants(dummyConsultantsByProject[id] || []);
-        } else {
-          // Wenn keine passende ID gefunden wird, zeige das erste Dummy-Projekt
-          setProject(dummyProjects['dummy-1']);
-          setConsultants(dummyConsultantsByProject['dummy-1'] || []);
-        }
-
+        console.error('Error loading project data:', error);
+        setError('API connection error. Showing demo data.');
+        setProject(null);
+        setConsultants([]);
         setLoading(false);
       }
     };
 
     fetchProjectData();
+
+    const handleClickOutside = (event) => {
+      if (statusDropdownRef.current && !statusDropdownRef.current.contains(event.target)) {
+        setStatusDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, [id]);
 
   const handleSendToClient = () => {
-    alert(`Projekt "${project?.title}" wurde an den Kunden gesendet!`);
+    alert(`Project "${project?.title}" has been sent to the client!`);
   };
 
   const handleBackToProjects = () => {
@@ -189,51 +146,72 @@ const OneProject = () => {
   const handleAddConsultant = (e) => {
     e.preventDefault();
     if (!newConsultant.trim()) return;
-    
-    // Hier würde später die API-Integration erfolgen
-    alert(`Consultant "${newConsultant}" zum Projekt hinzufügen`);
+
+    alert(`Consultant "${newConsultant}" added to project`);
     setNewConsultant('');
   };
 
   const handleAcceptConsultant = (consultantId) => {
-    alert(`Consultant ${consultantId} akzeptiert`);
+    alert(`Consultant ${consultantId} accepted`);
   };
 
   const handleRejectConsultant = (consultantId) => {
-    alert(`Consultant ${consultantId} abgelehnt`);
+    alert(`Consultant ${consultantId} rejected`);
+  };
+
+  const toggleStatusDropdown = () => {
+    setStatusDropdownOpen(!statusDropdownOpen);
+  };
+
+  const handleStatusChange = async (newStatus) => {
+    if (!project || project.status === newStatus || updatingStatus) return;
+
+    setUpdatingStatus(true);
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8002';
+
+      const updatedProject = {
+  title: project.title || "",
+  description: project.description || "",
+  location: project.location || "",
+  start_date: formatApiDate(project.start_date),
+  end_date: formatApiDate(project.end_date),
+  budget: parseBudget(project.budget),
+  status: newStatus,
+  customer_id: typeof project.customer_id === 'number' ? project.customer_id : 0,
+  customer_priorities: project.customer_priorities || "",
+  project_feedback_rating: null,
+  project_feedback_comment: null,
+  requirements: Array.isArray(project.requirements) ? project.requirements : []
+};
+
+
+
+      console.log("Sending update with data:", updatedProject);
+    console.log(updatedProject)
+
+      await axios.put(`${apiUrl}/project/edit/${id}`, updatedProject);
+      setProject({ ...project, status: newStatus });
+      setStatusDropdownOpen(false);
+    } catch (error) {
+      console.error('Error updating project status:', error);
+      console.error('Update failed:', error.response?.data || error.message);
+
+      alert('Failed to update project status.');
+    } finally {
+      setUpdatingStatus(false);
+    }
   };
 
   if (loading) {
-    return <div className="loading-container">Projekt wird geladen...</div>;
-  }
-
-  if (id === 'new') {
-    return (
-      <div className="one-project-page">
-        <div className="one-project-container">
-          <div className="project-header-actions">
-            <button className="back-button" onClick={handleBackToProjects}>
-              ← Zurück zur Übersicht
-            </button>
-          </div>
-
-          <h1 className="project-title">Neues Projekt erstellen</h1>
-          <div className="new-project-form">
-            <p>Hier kommt später ein Formular zur Projekterstellung...</p>
-            <button className="back-button" onClick={handleBackToProjects}>
-              Abbrechen
-            </button>
-          </div>
-        </div>
-      </div>
-    );
+    return <div className="loading-container">Loading project...</div>;
   }
 
   if (!project) {
     return (
       <div className="error-container">
-        <h2>Projekt nicht gefunden</h2>
-        <button onClick={handleBackToProjects}>Zurück zur Übersicht</button>
+        <h2>Project not found</h2>
+        <button onClick={handleBackToProjects}>Back to overview</button>
       </div>
     );
   }
@@ -243,9 +221,26 @@ const OneProject = () => {
       <div className="one-project-container">
         <div className="project-header-actions">
           <button className="back-button" onClick={handleBackToProjects}>
-            ← Zurück zur Übersicht
+            ← Back to Overview
           </button>
-          <StatusBadge status={project.status} />
+          <div className="status-dropdown" ref={statusDropdownRef} tabIndex={0}>
+            <div onClick={toggleStatusDropdown} className="clickable">
+              <StatusBadge status={project.status} />
+            </div>
+            {statusDropdownOpen && (
+              <div className="status-dropdown-content">
+                {statusOptions.map(option => (
+                  <div
+                    key={option.value}
+                    className={`status-option ${option.value}`}
+                    onClick={() => handleStatusChange(option.value)}
+                  >
+                    {option.label}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         <h1 className="project-title">{project.title}</h1>
@@ -253,44 +248,37 @@ const OneProject = () => {
 
         <div className="project-details-card">
           <div className="project-info-section">
-            <div className="project-info-column">
+            <div className="client-budget-row">
               <div className="info-item">
-                <span className="info-label">Kunde:</span>
+                <span className="info-label">Client:</span>
                 <span className="info-value">{project.client}</span>
               </div>
               <div className="info-item">
-                <span className="info-label">Zeitrahmen:</span>
-                <span className="info-value">{project.timeline}</span>
+                <span className="info-label">Budget:</span>
+                <span className="info-value">{formatCurrency(project.budget)}</span>
               </div>
             </div>
 
-            <div className="project-info-column">
+            <div className="dates-row">
               <div className="info-item">
                 <span className="info-label">Start:</span>
                 <span className="info-value">{project.startDate}</span>
               </div>
               <div className="info-item">
-                <span className="info-label">Ende:</span>
+                <span className="info-label">End:</span>
                 <span className="info-value">{project.endDate}</span>
-              </div>
-            </div>
-
-            <div className="project-info-column">
-              <div className="info-item">
-                <span className="info-label">Budget:</span>
-                <span className="info-value">{project.budget}</span>
               </div>
             </div>
           </div>
 
           <div className="project-description-section">
-            <h3>Projektbeschreibung</h3>
+            <h3>Project Description</h3>
             <p>{project.description}</p>
           </div>
 
           {project.goals && project.goals.length > 0 && (
             <div className="project-goals-section">
-              <h3>Projektziele</h3>
+              <h3>Project Goals</h3>
               <ul>
                 {project.goals.map((goal, index) => (
                   <li key={index}>{goal}</li>
@@ -302,24 +290,24 @@ const OneProject = () => {
 
         <div className="consultants-section">
           <div className="consultants-header">
-            <h2>Projekt-Team</h2>
+            <h2>Project Team</h2>
             <form className="add-consultant-form" onSubmit={handleAddConsultant}>
               <input
                 type="text"
-                placeholder="Placeholder"
+                placeholder="Add consultant name..."
                 value={newConsultant}
                 onChange={(e) => setNewConsultant(e.target.value)}
                 className="consultant-input"
               />
-              <button type="submit" className="add-consultant-btn">Prompt</button>
+              <button type="submit" className="add-consultant-btn">Add</button>
             </form>
           </div>
-          
+
           <div className="consultants-grid">
             {consultants.length > 0 ? (
               consultants.map(consultant => (
-                <ConsultantCard 
-                  key={consultant.id} 
+                <ConsultantCard
+                  key={consultant.id}
                   consultant={consultant}
                   onAccept={() => handleAcceptConsultant(consultant.id)}
                   onReject={() => handleRejectConsultant(consultant.id)}
@@ -327,7 +315,7 @@ const OneProject = () => {
               ))
             ) : (
               <div className="no-consultants">
-                Diesem Projekt sind noch keine Consultants zugewiesen.
+                No consultants assigned to this project.
               </div>
             )}
           </div>
@@ -335,7 +323,7 @@ const OneProject = () => {
 
         <div className="project-actions">
           <button className="send-client-btn" onClick={handleSendToClient}>
-            An Kunden senden
+            Send to Client
           </button>
         </div>
       </div>
