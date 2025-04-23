@@ -19,7 +19,8 @@ class ProjectBase(BaseModel):
     customer_priorities: Optional[str]
     project_feedback_rating: Optional[int]
     project_feedback_comment: Optional[str]
-    requirements: Optional[List[Requirement]]  # <-- NEU
+    requirements: Optional[List[Requirement]] = None
+
 
 class ProjectCreate(ProjectBase):
     pass
