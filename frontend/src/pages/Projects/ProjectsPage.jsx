@@ -1,12 +1,23 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './ProjectsPage.css';
 
 const ProjectsPage = () => {
+  const navigate = useNavigate();
   const [projects, setProjects] = useState([]);
   const [filteredProjects, setFilteredProjects] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState('');
   const [loading, setLoading] = useState(true);
+  
+  // Dummy-Projekt für Vorschau
+  const dummyProject = {
+    id: 'dummy-1',
+    title: 'Webseiten-Optimierung für StartupX',
+    subtitle: 'UX/UI Redesign für Startup im FinTech-Bereich',
+    description: 'Ein junges FinTech-Startup benötigt Hilfe bei der Optimierung ihrer Webseite. Das Ziel ist es, die Conversion-Rate zu erhöhen und die Nutzererfahrung zu verbessern. Wir suchen nach Studierenden mit Erfahrung in UX/UI Design und Webentwicklung.',
+    status: 'open'
+  };
 
   const statusOptions = [
     { value: '', label: 'All' },
@@ -26,6 +37,9 @@ const ProjectsPage = () => {
         setLoading(false);
       } catch (error) {
         console.error('Fehler beim Laden der Projekte:', error);
+        // Bei Fehler: Dummy-Projekt anzeigen
+        setProjects([dummyProject]);
+        setFilteredProjects([dummyProject]);
         setLoading(false);
       }
     };
@@ -35,6 +49,14 @@ const ProjectsPage = () => {
 
   const handleStatusFilter = (status) => {
     setSelectedStatus(status);
+    // Wenn ein Filter gesetzt wird und wir das Dummy-Projekt zeigen, passen wir die Filterung an
+    if (projects.length === 1 && projects[0].id === 'dummy-1') {
+      if (status === '' || status === dummyProject.status) {
+        setFilteredProjects([dummyProject]);
+      } else {
+        setFilteredProjects([]);
+      }
+    }
   };
 
   const getStatusClass = (status) => {
@@ -53,8 +75,7 @@ const ProjectsPage = () => {
   };
 
   const viewProjectDetails = (id) => {
-    console.log(`Details für Projekt ${id} anzeigen`);
-    // Später könnte hier eine Navigation passieren: navigate(`/projects/${id}`)
+    navigate(`/project/${id}`);
   };
   
   const handleCreateProject = () => {
@@ -126,3 +147,4 @@ const ProjectsPage = () => {
 };
 
 export default ProjectsPage;
+
