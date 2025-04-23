@@ -1,3 +1,4 @@
+/* frontend/src/pages/OneProject/OneProject.css */
 .one-project-page {
   padding: 2rem;
   max-width: 1400px;
@@ -47,35 +48,6 @@
   font-size: 1.3rem;
   margin: 0;
   margin-bottom: 2rem;
-}
-
-.project-status {
-  display: inline-block;
-  padding: 0.3rem 0.8rem;
-  border-radius: 15px;
-  font-size: 0.8rem;
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-.status-open {
-  background-color: #f0f9ff;
-  color: #0077cc;
-}
-
-.status-progress {
-  background-color: #fff8e6;
-  color: #f59e0b;
-}
-
-.status-completed {
-  background-color: #f0fdf4;
-  color: #16a34a;
-}
-
-.status-cancelled {
-  background-color: #fef2f2;
-  color: #dc2626;
 }
 
 .project-details-card {
@@ -161,72 +133,13 @@
   width: 100%;
 }
 
-.consultant-card {
-  background-color: #ffffff;
-  border: 1px solid #e0e0e0;
+.no-consultants {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 2rem;
+  background-color: #f9f9f9;
   border-radius: 8px;
-  padding: 1.5rem;
-  display: flex;
-  gap: 1rem;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-}
-
-.consultant-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-}
-
-.consultant-avatar {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  overflow: hidden;
-  flex-shrink: 0;
-}
-
-.consultant-avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.consultant-info {
-  flex: 1;
-}
-
-.consultant-info h3 {
-  color: #333;
-  margin: 0;
-  margin-bottom: 0.3rem;
-  font-size: 1.1rem;
-}
-
-.consultant-role {
-  color: #0db39e;
-  font-size: 0.9rem;
-  font-weight: 500;
-  margin-bottom: 0.5rem;
-}
-
-.consultant-experience {
-  font-size: 0.9rem;
-  margin-bottom: 0.5rem;
-}
-
-.consultant-skills {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-  margin-top: 0.5rem;
-}
-
-.skill-tag {
-  background-color: #f0f9ff;
-  color: #0077cc;
-  font-size: 0.8rem;
-  padding: 0.2rem 0.5rem;
-  border-radius: 12px;
+  color: #666;
 }
 
 .project-actions {
@@ -250,6 +163,28 @@
 
 .send-client-btn:hover {
   background-color: #0a9e8c;
+}
+
+.loading-container, .error-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+  text-align: center;
+  color: #666;
+}
+
+.error-container h2 {
+  color: #dc2626;
+  margin-bottom: 1rem;
+}
+
+.new-project-form {
+  background-color: #f8f8f8;
+  border-radius: 8px;
+  padding: 2rem;
+  margin-top: 1rem;
 }
 
 @media (max-width: 768px) {
@@ -280,12 +215,6 @@
 }
 
 @media (max-width: 500px) {
-  .consultant-card {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-
   .project-header-actions {
     flex-direction: column;
     align-items: flex-start;
