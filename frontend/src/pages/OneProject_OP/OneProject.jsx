@@ -13,6 +13,7 @@ const OneProject = () => {
   const [consultants, setConsultants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [newConsultant, setNewConsultant] = useState('');
 
   // Beispiel-Projektdaten falls keine Verbindung zur API besteht
   const dummyProjects = {
@@ -147,12 +148,12 @@ const OneProject = () => {
         const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8002';
 
         // Projekt laden
-        const projectResponse = await axios.get(`${apiUrl}/projects/${id}`);
-        setProject(projectResponse.data);
+      //  const projectResponse = await axios.get(`${apiUrl}/projects/${id}`);
+        //setProject(projectResponse.data);
 
         // Consultants für das Projekt laden
-        const consultantsResponse = await axios.get(`${apiUrl}/projects/${id}/consultants`);
-        setConsultants(consultantsResponse.data.consultants);
+        //const consultantsResponse = await axios.get(`${apiUrl}/projects/${id}/consultants`);
+        //setConsultants(consultantsResponse.data.consultants);
 
         setLoading(false);
         setError(null);
@@ -183,6 +184,23 @@ const OneProject = () => {
 
   const handleBackToProjects = () => {
     navigate('/projects');
+  };
+
+  const handleAddConsultant = (e) => {
+    e.preventDefault();
+    if (!newConsultant.trim()) return;
+    
+    // Hier würde später die API-Integration erfolgen
+    alert(`Consultant "${newConsultant}" zum Projekt hinzufügen`);
+    setNewConsultant('');
+  };
+
+  const handleAcceptConsultant = (consultantId) => {
+    alert(`Consultant ${consultantId} akzeptiert`);
+  };
+
+  const handleRejectConsultant = (consultantId) => {
+    alert(`Consultant ${consultantId} abgelehnt`);
   };
 
   if (loading) {
@@ -283,11 +301,29 @@ const OneProject = () => {
         </div>
 
         <div className="consultants-section">
-          <h2>Projekt-Team</h2>
+          <div className="consultants-header">
+            <h2>Projekt-Team</h2>
+            <form className="add-consultant-form" onSubmit={handleAddConsultant}>
+              <input
+                type="text"
+                placeholder="Placeholder"
+                value={newConsultant}
+                onChange={(e) => setNewConsultant(e.target.value)}
+                className="consultant-input"
+              />
+              <button type="submit" className="add-consultant-btn">Prompt</button>
+            </form>
+          </div>
+          
           <div className="consultants-grid">
             {consultants.length > 0 ? (
               consultants.map(consultant => (
-                <ConsultantCard key={consultant.id} consultant={consultant} />
+                <ConsultantCard 
+                  key={consultant.id} 
+                  consultant={consultant}
+                  onAccept={() => handleAcceptConsultant(consultant.id)}
+                  onReject={() => handleRejectConsultant(consultant.id)}
+                />
               ))
             ) : (
               <div className="no-consultants">

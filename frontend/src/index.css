@@ -4,12 +4,32 @@
   box-sizing: border-box;
 }
 
+:root {
+  --mint-50: #e6f7f3;
+  --mint-100: #c1e9e1;
+  --mint-200: #95dbce;
+  --mint-300: #66ceba;
+  --mint-400: #3ED3AE; /* Primary Mint */
+  --mint-500: #25A188;
+  --mint-600: #178473;
+  --mint-700: #12665b;
+  --mint-800: #0d4943;
+  --mint-900: #072d2a;
+
+  --white: #ffffff;
+  --black: #121212;
+  --dark-gray: #1e1e1e;
+  --lighter-gray: #2d2d2d;
+}
+
 html, body, #root {
   width: 100%;
   height: 100%;
   margin: 0;
   padding: 0;
-  font-family: 'Arial', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--black);
+  color: var(--white);
 }
 
 body {
