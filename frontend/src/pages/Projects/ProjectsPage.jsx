@@ -20,14 +20,14 @@ const ProjectsPage = () => {
       title: 'Webseiten-Optimierung für StartupX',
       subtitle: 'UX/UI Redesign für Startup im FinTech-Bereich',
       description: 'Ein junges FinTech-Startup benötigt Hilfe bei der Optimierung ihrer Webseite. Das Ziel ist es, die Conversion-Rate zu erhöhen und die Nutzererfahrung zu verbessern.',
-      status: 'open'
+      status: 'planned'
     },
     {
       id: 'dummy-2',
       title: 'KI-gestütztes Matching-System',
       subtitle: 'Automatisierung des Consultant-Matching-Prozesses',
       description: 'Entwicklung eines intelligenten Systems zur Optimierung der Berater-Projekt-Zuordnung durch maschinelles Lernen.',
-      status: 'in_progress'
+      status: 'active'
     },
     {
       id: 'dummy-3',
@@ -40,20 +40,27 @@ const ProjectsPage = () => {
 
   const statusOptions = [
     { value: '', label: 'All' },
-    { value: 'open', label: 'Open' },
-    { value: 'in_progress', label: 'Pending' },
-    { value: 'completed', label: 'Completed' },
-    { value: 'cancelled', label: 'Cancelled' }
+    { value: 'planned', label: 'Planned' },
+    { value: 'active', label: 'Active' },
+    { value: 'completed', label: 'Completed' }
   ];
 
   useEffect(() => {
     const fetchProjects = async () => {
       try {
         const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8002';
-        console.log("API-Anfrage an:", apiUrl);
-        const response = await axios.get(`${apiUrl}/projects${selectedStatus ? `?status=${selectedStatus}` : ''}`);
-        setProjects(response.data.projects);
-        setFilteredProjects(response.data.projects);
+        console.log("API-Anfrage an:", `${apiUrl}/project/all`);
+        const response = await axios.get(`${apiUrl}/project/all`);
+        const projectsData = response.data;
+        setProjects(projectsData);
+        
+        // Filtere Projekte nach Status, falls ein Filter ausgewählt ist
+        if (selectedStatus) {
+          setFilteredProjects(projectsData.filter(p => p.status === selectedStatus));
+        } else {
+          setFilteredProjects(projectsData);
+        }
+        
         setError(null);
         setLoading(false);
       } catch (error) {
@@ -104,6 +111,7 @@ const ProjectsPage = () => {
               key={option.value} 
               className={`filter-button ${selectedStatus === option.value ? 'active' : ''}`}
               onClick={() => handleStatusFilter(option.value)}
+              data-status={option.value}
             >
               {option.label}
             </button>
@@ -122,8 +130,8 @@ const ProjectsPage = () => {
                   <div className="project-content">
                     <div className="project-header">
                       <h2>{project.title}</h2>
-                      <StatusBadge status={project.status} />
                     </div>
+                    <StatusBadge status={project.status} />
                     <h3>{project.subtitle}</h3>
                     <p className="project-description">{project.description}</p>
                     <div className="project-actions">
@@ -148,3 +156,4 @@ const ProjectsPage = () => {
 };
 
 export default ProjectsPage;
+

@@ -19,5 +19,8 @@ class ConsultantCreate(ConsultantBase):
 class ConsultantOut(ConsultantBase):
     id: int
 
-    class Config:
-        orm_mode = True
+class Config:
+    from_attributes = True
+
+
+

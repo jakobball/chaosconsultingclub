@@ -1,6 +1,11 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
 from datetime import date
+
+class Requirement(BaseModel):
+    skill: str
+    amount: int
+    recommendedSeniority: str
 
 class ProjectBase(BaseModel):
     title: str
@@ -14,12 +19,13 @@ class ProjectBase(BaseModel):
     customer_priorities: Optional[str]
     project_feedback_rating: Optional[int]
     project_feedback_comment: Optional[str]
+    requirements: Optional[List[Requirement]] = None
+
 
 class ProjectCreate(ProjectBase):
     pass
 
 class ProjectOut(ProjectBase):
     id: int
-
     class Config:
-        orm_mode = True
+        from_attributes = True
