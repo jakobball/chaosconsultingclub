@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from sqlalchemy.orm import Session
 from config.db import SessionLocal
 from routes import project_ressource
+from routes import consultant_ressource
 from config.db import Base, engine
 from models import *
 
@@ -27,6 +28,8 @@ origins = [
     os.getenv("FRONTEND_ORIGIN", "https://chaosconsultingclub.vercel.app")
 ]
 app.include_router(project_ressource.router)
+app.include_router(consultant_ressource.router)
+
 
 # CORS Middleware einrichten
 app.add_middleware(
