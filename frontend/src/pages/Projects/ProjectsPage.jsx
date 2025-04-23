@@ -1,7 +1,9 @@
+// frontend/src/pages/Projects/ProjectsPage.jsx
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './ProjectsPage.css';
+import StatusBadge from '../../components/StatusBadge/StatusBadge';
 
 const ProjectsPage = () => {
   const navigate = useNavigate();
@@ -9,15 +11,32 @@ const ProjectsPage = () => {
   const [filteredProjects, setFilteredProjects] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState('');
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   
   // Dummy-Projekt für Vorschau
-  const dummyProject = {
-    id: 'dummy-1',
-    title: 'Webseiten-Optimierung für StartupX',
-    subtitle: 'UX/UI Redesign für Startup im FinTech-Bereich',
-    description: 'Ein junges FinTech-Startup benötigt Hilfe bei der Optimierung ihrer Webseite. Das Ziel ist es, die Conversion-Rate zu erhöhen und die Nutzererfahrung zu verbessern. Wir suchen nach Studierenden mit Erfahrung in UX/UI Design und Webentwicklung.',
-    status: 'open'
-  };
+  const dummyProjects = [
+    {
+      id: 'dummy-1',
+      title: 'Webseiten-Optimierung für StartupX',
+      subtitle: 'UX/UI Redesign für Startup im FinTech-Bereich',
+      description: 'Ein junges FinTech-Startup benötigt Hilfe bei der Optimierung ihrer Webseite. Das Ziel ist es, die Conversion-Rate zu erhöhen und die Nutzererfahrung zu verbessern.',
+      status: 'open'
+    },
+    {
+      id: 'dummy-2',
+      title: 'KI-gestütztes Matching-System',
+      subtitle: 'Automatisierung des Consultant-Matching-Prozesses',
+      description: 'Entwicklung eines intelligenten Systems zur Optimierung der Berater-Projekt-Zuordnung durch maschinelles Lernen.',
+      status: 'in_progress'
+    },
+    {
+      id: 'dummy-3',
+      title: 'Digitale Marktanalyse',
+      subtitle: 'Analyse des europäischen E-Commerce Marktes',
+      description: 'Durchführung einer umfassenden Marktanalyse für einen E-Commerce-Anbieter mit Schwerpunkt auf Wachstumsmöglichkeiten in verschiedenen europäischen Ländern.',
+      status: 'completed'
+    }
+  ];
 
   const statusOptions = [
     { value: '', label: 'All' },
@@ -30,16 +49,23 @@ const ProjectsPage = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const apiUrl = import.meta.env.VITE_API_URL;
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8002';
+        console.log("API-Anfrage an:", apiUrl);
         const response = await axios.get(`${apiUrl}/projects${selectedStatus ? `?status=${selectedStatus}` : ''}`);
         setProjects(response.data.projects);
         setFilteredProjects(response.data.projects);
+        setError(null);
         setLoading(false);
       } catch (error) {
         console.error('Fehler beim Laden der Projekte:', error);
-        // Bei Fehler: Dummy-Projekt anzeigen
-        setProjects([dummyProject]);
-        setFilteredProjects([dummyProject]);
+        setError('API-Verbindungsfehler. Zeige Demo-Daten.');
+        // Bei Fehler: Dummy-Projekte anzeigen
+        setProjects(dummyProjects);
+        if (selectedStatus) {
+          setFilteredProjects(dummyProjects.filter(p => p.status === selectedStatus));
+        } else {
+          setFilteredProjects(dummyProjects);
+        }
         setLoading(false);
       }
     };
@@ -49,29 +75,6 @@ const ProjectsPage = () => {
 
   const handleStatusFilter = (status) => {
     setSelectedStatus(status);
-    // Wenn ein Filter gesetzt wird und wir das Dummy-Projekt zeigen, passen wir die Filterung an
-    if (projects.length === 1 && projects[0].id === 'dummy-1') {
-      if (status === '' || status === dummyProject.status) {
-        setFilteredProjects([dummyProject]);
-      } else {
-        setFilteredProjects([]);
-      }
-    }
-  };
-
-  const getStatusClass = (status) => {
-    switch (status) {
-      case 'open': return 'status-open';
-      case 'in_progress': return 'status-progress';
-      case 'completed': return 'status-completed';
-      case 'cancelled': return 'status-cancelled';
-      default: return '';
-    }
-  };
-
-  const getStatusLabel = (status) => {
-    const option = statusOptions.find(opt => opt.value === status);
-    return option ? option.label : status;
   };
 
   const viewProjectDetails = (id) => {
@@ -79,8 +82,7 @@ const ProjectsPage = () => {
   };
   
   const handleCreateProject = () => {
-    console.log('Neues Projekt erstellen');
-    // Hier könnte später eine Navigation oder ein Modal geöffnet werden
+    navigate('/project/new');
   };
 
   return (
@@ -101,13 +103,14 @@ const ProjectsPage = () => {
             <button 
               key={option.value} 
               className={`filter-button ${selectedStatus === option.value ? 'active' : ''}`}
-              data-status={option.value}
               onClick={() => handleStatusFilter(option.value)}
             >
               {option.label}
             </button>
           ))}
         </div>
+
+        {error && <div className="error-message">{error}</div>}
 
         {loading ? (
           <div className="loading">Projekte werden geladen...</div>
@@ -119,9 +122,7 @@ const ProjectsPage = () => {
                   <div className="project-content">
                     <div className="project-header">
                       <h2>{project.title}</h2>
-                      <span className={`project-status ${getStatusClass(project.status)}`}>
-                        {getStatusLabel(project.status)}
-                      </span>
+                      <StatusBadge status={project.status} />
                     </div>
                     <h3>{project.subtitle}</h3>
                     <p className="project-description">{project.description}</p>
@@ -147,4 +148,3 @@ const ProjectsPage = () => {
 };
 
 export default ProjectsPage;
-
