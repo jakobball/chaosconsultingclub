@@ -148,12 +148,12 @@ const OneProject = () => {
         const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8002';
 
         // Projekt laden
-        const projectResponse = await axios.get(`${apiUrl}/projects/${id}`);
-        setProject(projectResponse.data);
+      //  const projectResponse = await axios.get(`${apiUrl}/projects/${id}`);
+        //setProject(projectResponse.data);
 
         // Consultants für das Projekt laden
-        const consultantsResponse = await axios.get(`${apiUrl}/projects/${id}/consultants`);
-        setConsultants(consultantsResponse.data.consultants);
+        //const consultantsResponse = await axios.get(`${apiUrl}/projects/${id}/consultants`);
+        //setConsultants(consultantsResponse.data.consultants);
 
         setLoading(false);
         setError(null);
