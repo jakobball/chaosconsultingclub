@@ -14,3 +14,4 @@ class Project(Base):
     customer_priorities = Column(Text)
     project_feedback_rating = Column(Integer)
     project_feedback_comment = Column(Text)
+    requirements = Column(Text)  # <-- NEU: als JSON-Text gespeichert

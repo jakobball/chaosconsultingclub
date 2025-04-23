@@ -1,0 +1,462 @@
+/* frontend/src/pages/OneProject/OneProject.css */
+:root {
+  --mint-50: #e6f7f3;
+  --mint-100: #c1e9e1;
+  --mint-200: #95dbce;
+  --mint-300: #66ceba;
+  --mint-400: #3ED3AE; /* Primary Mint */
+  --mint-500: #25A188;
+  --mint-600: #178473;
+  --mint-700: #12665b;
+  --mint-800: #0d4943;
+  --mint-900: #072d2a;
+
+  --white: #ffffff;
+  --black: #121212;
+  --dark-gray: #1e1e1e;
+  --lighter-gray: #2d2d2d;
+
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.2);
+  --shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.3);
+
+  --transition: all 0.2s ease;
+}
+
+.one-project-page {
+  padding: 2rem;
+  width: 100%;
+  max-width: 1200px; /* Feste maximale Breite */
+  min-width: 320px; /* Minimale Breite auf kleinen Geräten */
+  margin: 0 auto;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  color: var(--white);
+  background-color: var(--black);
+  box-sizing: border-box;
+}
+
+.one-project-container {
+  width: 100%;
+  background-color: var(--dark-gray);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow-wrap: break-word; /* Verhindert Textüberläufe */
+  word-break: break-word; /* Bricht lange Wörter, wenn nötig */
+}
+
+.project-header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.back-button {
+  background-color: transparent;
+  color: var(--mint-400);
+  border: 1px solid var(--mint-400);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.back-button:hover {
+  background-color: rgba(62, 211, 174, 0.1);
+}
+
+.project-title {
+  color: var(--white);
+  font-size: 2.2rem;
+  margin: 0;
+  margin-bottom: 0.5rem;
+}
+
+.project-subtitle {
+  color: var(--mint-400);
+  font-size: 1.3rem;
+  margin: 0;
+  margin-bottom: 2rem;
+}
+
+.project-details-card {
+  background-color: var(--lighter-gray);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.project-info-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.client-budget-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.client-budget-row .info-item {
+  flex: 1;
+  min-width: 0;
+}
+
+.project-info-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.dates-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.dates-row .info-item {
+  flex: 1;
+  min-width: 0;
+}
+
+.info-item {
+  margin-bottom: 0.8rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.info-label {
+  color: var(--white);
+  opacity: 0.7;
+  font-size: 0.9rem;
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+.info-value {
+  font-weight: 500;
+  color: var(--white);
+  font-size: 1rem;
+}
+
+.project-description-section h3,
+.project-goals-section h3 {
+  color: var(--mint-400);
+  margin-top: 0;
+  margin-bottom: 0.8rem;
+  font-size: 1.2rem;
+}
+
+.project-description-section p {
+  color: var(--white);
+  opacity: 0.9;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.project-goals-section {
+  margin-top: 1.5rem;
+}
+
+.project-goals-section ul {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.project-goals-section li {
+  color: var(--white);
+  opacity: 0.9;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+.consultants-section {
+  margin-bottom: 2rem;
+}
+
+.consultants-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.consultants-section h2 {
+  color: var(--mint-400);
+  margin-bottom: 0;
+  font-size: 1.5rem;
+}
+
+.add-consultant-form {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.consultant-input {
+  padding: 0.6rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  min-width: 250px;
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--white);
+}
+
+.consultant-input:focus {
+  outline: none;
+  border-color: var(--mint-400);
+}
+
+.add-consultant-btn {
+  background-color: var(--mint-400);
+  color: var(--black);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 1rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.add-consultant-btn:hover {
+  background-color: var(--mint-500);
+}
+
+.consultants-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.no-consultants {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 2rem;
+  background-color: var(--lighter-gray);
+  border-radius: var(--radius);
+  color: var(--white);
+  opacity: 0.7;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.project-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 2rem;
+}
+
+.send-client-btn {
+  background-color: var(--mint-400);
+  color: var(--black);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 0.7rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+}
+
+.send-client-btn:hover {
+  background-color: var(--mint-500);
+}
+
+.loading-container, .error-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+  text-align: center;
+  color: var(--white);
+}
+
+.loading-container {
+  position: relative;
+}
+
+.loading-container::before {
+  content: "";
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-full);
+  border-top: 4px solid var(--mint-400);
+  width: 40px;
+  height: 40px;
+  margin-bottom: 1rem;
+  animation: spin 1s linear infinite;
+  position: absolute;
+  top: 40%;
+  transform: translateY(-50%);
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-container h2 {
+  color: var(--mint-400);
+  margin-bottom: 1rem;
+}
+
+.new-project-form {
+  background-color: var(--lighter-gray);
+  border-radius: var(--radius);
+  padding: 2rem;
+  margin-top: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Status-Änderungsfunktionalität */
+.status-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.status-dropdown-content {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  margin-top: 0.5rem;
+  min-width: 160px;
+  background-color: var(--darker-gray, #1a1a1a);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow);
+  z-index: 100;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.status-dropdown:hover .status-dropdown-content,
+.status-dropdown:focus-within .status-dropdown-content,
+.status-dropdown.active .status-dropdown-content {
+  display: block;
+}
+
+.status-option {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  transition: var(--transition);
+  color: var(--white);
+}
+
+.status-option:hover {
+  background-color: rgba(62, 211, 174, 0.1);
+}
+
+/* Status-Optionen im Dropdown - angepasst an ProjectsPage */
+.status-option.planned {
+  border-left: 3px solid #4CAF50;
+}
+
+.status-option.active {
+  border-left: 3px solid #2196F3;
+}
+
+.status-option.completed {
+  border-left: 3px solid #9C27B0;
+}
+
+/* Entferne die nicht mehr benötigten Status-Klassen */
+/*
+.status-option.open {
+  border-left: 3px solid #4CAF50;
+}
+
+.status-option.in_progress {
+  border-left: 3px solid #2196F3;
+}
+
+.status-option.closed {
+  border-left: 3px solid #F44336;
+}
+*/
+
+.clickable {
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .one-project-page {
+    padding: 1rem;
+  }
+
+  .one-project-container {
+    padding: 1.5rem;
+  }
+
+  .project-title {
+    font-size: 1.8rem;
+  }
+
+  .project-subtitle {
+    font-size: 1.1rem;
+  }
+
+  .project-info-section {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .client-budget-row,
+  .dates-row {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .consultants-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .consultants-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .add-consultant-form {
+    width: 100%;
+  }
+
+  .consultant-input {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 500px) {
+  .project-header-actions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .project-actions {
+    justify-content: center;
+  }
+
+  .add-consultant-form {
+    flex-direction: column;
+  }
+
+  .add-consultant-btn {
+    width: 100%;
+  }
+}
+

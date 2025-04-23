@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 from routes import recommendation_ressource
 from config.db import SessionLocal
 from routes import project_ressource
+from routes import consultant_ressource
 from config.db import Base, engine
 from models import *
 
@@ -30,6 +31,8 @@ origins = [
 ]
 app.include_router(project_ressource.router)
 app.include_router(recommendation_ressource.router)
+
+app.include_router(consultant_ressource.router)
 
 
 # CORS Middleware einrichten
