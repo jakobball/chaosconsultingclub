@@ -88,52 +88,65 @@ const OneProject = () => {
     return value;
   };
 
-  useEffect(() => {
-    const fetchProjectData = async () => {
-      if (id === 'new') {
-        setLoading(false);
-        return;
-      }
+useEffect(() => {
+  const fetchProjectData = async () => {
+    if (id === 'new') {
+      setLoading(false);
+      return;
+    }
 
-      try {
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8002';
-        const projectResponse = await axios.get(`${apiUrl}/project/${id}`);
-        const loadedProject = projectResponse.data;
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8002';
+      const projectResponse = await axios.get(`${apiUrl}/project/${id}`);
+      const loadedProject = projectResponse.data;
 
-        setProject({
-          ...loadedProject,
-          subtitle: loadedProject.customer_priorities || '',
-          client: loadedProject.customer_id ? `Client #${loadedProject.customer_id}` : 'Unknown',
-          startDate: formatDate(loadedProject.start_date),
-          endDate: formatDate(loadedProject.end_date),
-          goals: loadedProject.requirements?.map(r => `${r.skill} (${r.recommendedSeniority}) x${r.amount}`) || []
-        });
+      setProject({
+        ...loadedProject,
+        subtitle: loadedProject.customer_priorities || '',
+        client: loadedProject.customer_id ? `Client #${loadedProject.customer_id}` : 'Unknown',
+        startDate: formatDate(loadedProject.start_date),
+        endDate: formatDate(loadedProject.end_date),
+        goals: loadedProject.requirements?.map(r => `${r.skill} (${r.recommendedSeniority}) x${r.amount}`) || []
+      });
 
-        setConsultants([]);
-        setError(null);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error loading project data:', error);
-        setError('API connection error. Showing demo data.');
-        setProject(null);
-        setConsultants([]);
-        setLoading(false);
-      }
-    };
+      // 👇 Staffing laden
+      const staffingResponse = await axios.get(`${apiUrl}/recommendation/getstaffing/${id}`);
+      const staffingData = staffingResponse.data;
 
-    fetchProjectData();
+      // Mappe Staffing-Einträge zu ConsultantCard-kompatiblen Objekten
+      const formattedConsultants = staffingData.map(entry => ({
+        id: entry.consultant_id,
+        name: `Consultant #${entry.consultant_id}`,
+        role: entry.requirement_level || 'Consultant',
+        experience: `${entry.score || 0}% Match`,
+        skills: Array.isArray(entry.requirement_skill) ? entry.requirement_skill : []
+      }));
 
-    const handleClickOutside = (event) => {
-      if (statusDropdownRef.current && !statusDropdownRef.current.contains(event.target)) {
-        setStatusDropdownOpen(false);
-      }
-    };
+      setConsultants(formattedConsultants);
+      setError(null);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error loading project or staffing data:', error);
+      setError('API connection error. Showing demo data.');
+      setProject(null);
+      setConsultants([]);
+      setLoading(false);
+    }
+  };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [id]);
+  fetchProjectData();
+
+  const handleClickOutside = (event) => {
+    if (statusDropdownRef.current && !statusDropdownRef.current.contains(event.target)) {
+      setStatusDropdownOpen(false);
+    }
+  };
+
+  document.addEventListener('mousedown', handleClickOutside);
+  return () => {
+    document.removeEventListener('mousedown', handleClickOutside);
+  };
+}, [id]);
 
   const handleSendToClient = () => {
     alert(`Project "${project?.title}" has been sent to the client!`);
