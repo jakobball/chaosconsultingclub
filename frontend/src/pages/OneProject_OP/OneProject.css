@@ -1,0 +1,227 @@
+/* frontend/src/pages/OneProject/OneProject.css */
+.one-project-page {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  font-family: 'Arial', sans-serif;
+}
+
+.one-project-container {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  padding: 2rem;
+}
+
+.project-header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.back-button {
+  background-color: transparent;
+  color: #0db39e;
+  border: 1px solid #0db39e;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.back-button:hover {
+  background-color: #0db39e;
+  color: white;
+}
+
+.project-title {
+  color: #333;
+  font-size: 2.2rem;
+  margin: 0;
+  margin-bottom: 0.5rem;
+}
+
+.project-subtitle {
+  color: #666;
+  font-size: 1.3rem;
+  margin: 0;
+  margin-bottom: 2rem;
+}
+
+.project-details-card {
+  background-color: #f8f8f8;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.project-info-section {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.project-info-column {
+  flex: 1;
+  min-width: 200px;
+}
+
+.info-item {
+  margin-bottom: 0.8rem;
+}
+
+.info-label {
+  color: #777;
+  font-size: 0.9rem;
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+.info-value {
+  font-weight: 500;
+  color: #333;
+  font-size: 1rem;
+}
+
+.project-description-section h3,
+.project-goals-section h3 {
+  color: #0db39e;
+  margin-top: 0;
+  margin-bottom: 0.8rem;
+  font-size: 1.2rem;
+}
+
+.project-description-section p {
+  color: #555;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.project-goals-section {
+  margin-top: 1.5rem;
+}
+
+.project-goals-section ul {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.project-goals-section li {
+  color: #555;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+.consultants-section {
+  margin-bottom: 2rem;
+}
+
+.consultants-section h2 {
+  color: #0db39e;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+}
+
+.consultants-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.no-consultants {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 2rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  color: #666;
+}
+
+.project-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 2rem;
+}
+
+.send-client-btn {
+  background-color: #0db39e;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.7rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.send-client-btn:hover {
+  background-color: #0a9e8c;
+}
+
+.loading-container, .error-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+  text-align: center;
+  color: #666;
+}
+
+.error-container h2 {
+  color: #dc2626;
+  margin-bottom: 1rem;
+}
+
+.new-project-form {
+  background-color: #f8f8f8;
+  border-radius: 8px;
+  padding: 2rem;
+  margin-top: 1rem;
+}
+
+@media (max-width: 768px) {
+  .one-project-page {
+    padding: 1rem;
+  }
+
+  .one-project-container {
+    padding: 1.5rem;
+  }
+
+  .project-title {
+    font-size: 1.8rem;
+  }
+
+  .project-subtitle {
+    font-size: 1.1rem;
+  }
+
+  .project-info-section {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .consultants-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 500px) {
+  .project-header-actions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .project-actions {
+    justify-content: center;
+  }
+}
