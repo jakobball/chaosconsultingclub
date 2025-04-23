@@ -2,10 +2,12 @@ from typing import List
 from fastapi import FastAPI, Depends
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
+import requests
 import uvicorn
 import os
 from dotenv import load_dotenv
 from sqlalchemy.orm import Session
+from routes import recommendation_ressource
 from config.db import SessionLocal
 from routes import project_ressource
 from routes import consultant_ressource
@@ -28,6 +30,8 @@ origins = [
     os.getenv("FRONTEND_ORIGIN", "https://chaosconsultingclub.vercel.app")
 ]
 app.include_router(project_ressource.router)
+app.include_router(recommendation_ressource.router)
+
 app.include_router(consultant_ressource.router)
 
 
@@ -41,3 +45,4 @@ app.add_middleware(
 )
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8002)
+

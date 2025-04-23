@@ -51,8 +51,41 @@ def update_project_by_id(db: Session, project_id: int, updated_data: ProjectCrea
     project = db.query(Project).filter(Project.id == project_id).first()
     if not project:
         raise HTTPException(status_code=404, detail="Project not found")
-    for key, value in updated_data.dict().items():
+
+    data_dict = updated_data.dict()
+
+    # 🔥 Wichtig: requirements IMMER in einen String umwandeln – auch leere Listen
+    if data_dict.get("requirements") is not None:
+        data_dict["requirements"] = json.dumps(data_dict["requirements"])
+    else:
+        data_dict["requirements"] = json.dumps([])  # <-- DAS hier war vorher wahrscheinlich `None` oder eine echte Liste
+
+    for key, value in data_dict.items():
         setattr(project, key, value)
+
     db.commit()
     db.refresh(project)
+
+    # Zurückkonvertieren für das Response
+    if isinstance(project.requirements, str):
+        try:
+            project.requirements = json.loads(project.requirements)
+        except Exception:
+            project.requirements = []
+
     return project
+
+def get_project_by_id(db: Session, project_id: int):
+    project = db.query(Project).filter(Project.id == project_id).first()
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    # JSON-Feld zurückumwandeln
+    if isinstance(project.requirements, str):
+        try:
+            project.requirements = json.loads(project.requirements)
+        except Exception:
+            project.requirements = []
+
+    return project
+
