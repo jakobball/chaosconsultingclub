@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from config.db import SessionLocal
-from schemes.Customer import CustomerCreate, CustomerOut
-from service.customer_service import (
+from backend.config.db import SessionLocal
+from backend.schemes.Customer import CustomerCreate, CustomerOut
+from backend.service.customer_service import (
     create_customer,
     get_all_customers,
     get_customer_by_id,

@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Text, Float, Date, Boolean, DateTime, ForeignKey
-from config.db import Base
+from backend.config.db import Base
 class Project(Base):
     __tablename__ = "Project"
     id = Column(Integer, primary_key=True)

@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 
-from models import Staffing
-from routes.client_ressource import get_db
-from schemes.staffing import StaffingOut
-from service.create_staffing_service import create_suggestion, delete_staffing_by_project_id, get_staffing_by_project_id
-from config.db import SessionLocal
+from backend.models import Staffing
+from backend.routes.client_ressource import get_db
+from backend.schemes.staffing import StaffingOut
+from backend.service.create_staffing_service import create_suggestion, delete_staffing_by_project_id, get_staffing_by_project_id
+from backend.config.db import SessionLocal
 
 router = APIRouter(prefix="/recommendation", tags=["recommendation"])
 

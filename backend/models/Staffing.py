@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Text, Float, Date, Boolean, DateTime, ForeignKey
-from config.db import Base
+from backend.config.db import Base
 
 class Staffing(Base):
     __tablename__ = "Staffing"

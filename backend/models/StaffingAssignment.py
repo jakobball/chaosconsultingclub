@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Text, Float, Date, Boolean, DateTime, ForeignKey
-from config.db import Base
+from backend.config.db import Base
 class StaffingAssignment(Base):
     __tablename__ = "StaffingAssignment"
     id = Column(Integer, primary_key=True)

@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from models.Consulltant import Consultant
-from schemes.Consultant import ConsultantCreate
+from backend.models.Consulltant import Consultant
+from backend.schemes.Consultant import ConsultantCreate
 from fastapi import HTTPException
 
 import json
