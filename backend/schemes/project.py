@@ -15,7 +15,7 @@ class ProjectBase(BaseModel):
     end_date: date
     budget: Optional[int]
     status: str
-    customer_id: int
+    customer_id: Optional[int] = None
     customer_priorities: Optional[str]
     project_feedback_rating: Optional[int]
     project_feedback_comment: Optional[str]

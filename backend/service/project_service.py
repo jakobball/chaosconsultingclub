@@ -25,7 +25,6 @@ def create_project(db: Session, project_data: ProjectCreate):
     return new_project
 
 
-import json
 
 def get_all_projects(db: Session):
     projects = db.query(Project).all()

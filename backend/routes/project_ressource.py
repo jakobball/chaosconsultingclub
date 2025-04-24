@@ -26,6 +26,8 @@ def get_db():
 # Add a new project
 @router.post("/add", response_model=ProjectOut)
 def add_project(data: ProjectAndCustomerCreate, db: Session = Depends(get_db)):
+    print("📦 Angekommene Daten im Backend:")
+    print(data)
     # Zuerst Kunde erstellen
     customer = create_customer(db, data.customer)
     # Dann Kunde-ID ins Projekt setzen
