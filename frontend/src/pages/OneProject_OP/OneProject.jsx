@@ -45,6 +45,7 @@ const OneProject = () => {
   const [newConsultant, setNewConsultant] = useState('');
   const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
   const [updatingStatus, setUpdatingStatus] = useState(false);
+  const [loadingConsultant, setLoadingConsultant] = useState(false); // Neu: Ladezustand für Add-Button
   const statusDropdownRef = useRef(null);
 
   const statusOptions = [
@@ -187,8 +188,10 @@ return {
 
 const handleAddConsultant = async (e) => {
     e.preventDefault();
-    if (!newConsultant.trim()) return;
+    if (!newConsultant.trim() || loadingConsultant) return;
 
+    setLoadingConsultant(true); // Lade-Zustand aktivieren
+    
     try {
       const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8002';
 
@@ -212,6 +215,8 @@ const handleAddConsultant = async (e) => {
     } catch (error) {
       console.error('Fehler beim Senden der Consultant-Anfrage:', error);
       alert('Fehler beim Senden. Bitte erneut versuchen.');
+    } finally {
+      setLoadingConsultant(false); // Lade-Zustand zurücksetzen
     }
   };
 
@@ -355,13 +360,15 @@ const handleCustomerClick = () => {
                 value={newConsultant}
                 onChange={(e) => setNewConsultant(e.target.value)}
                 className="consultant-input"
+                disabled={loadingConsultant}
               />
               <button 
                 type="submit" 
                 className="add-consultant-btn" 
-                style={{ padding: '8px 15px', minWidth: '80px' }}
+                style={{ padding: '8px 15px', minWidth: '120px', height: '36px', whiteSpace: 'nowrap' }}
+                disabled={loadingConsultant}
               >
-                Add
+                {loadingConsultant ? 'Loading...' : 'Add'}
               </button>
             </form>
           </div>

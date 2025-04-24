@@ -97,7 +97,12 @@ const ProjectsPage = () => {
     <div className="projects-page">
       <div className="projects-container">
         <div className="header-container">
-          <h1>Chaos Consulting Club Projects</h1>
+          <div className="logo-container">
+            <h1 className="logo-text">
+              <span className="logo-match">Match</span>
+              <span className="logo-wise">wise</span>
+            </h1>
+          </div>
           <button 
             className="create-project-btn"
             onClick={handleCreateProject}
