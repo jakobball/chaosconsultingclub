@@ -117,37 +117,79 @@ const UploadProject = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     const validationErrors = validateCustomerForm();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
+  
+    // Hilfsfunktionen zur sicheren Umwandlung
+const safeString = (value) => {
+  return value && value.trim() !== "" ? value : null;
+};
+
+const safeInt = (value) => {
+  const num = Number(value);
+  return !isNaN(num) ? num : null;
+};
+
+const parseRequirements = () => {
+  if (!projectData.required_skills) return [];
+  return projectData.required_skills.split(',').map(skill => ({
+    skill: skill.trim(),
+    amount: 1,
+    recommendedSeniority: "Intermediate"
+  }));
+};
+
+// Finaler, kombinierter Payload
+const payload = {
+  project: {
+    title: safeString(projectData.title),
+    description: safeString(projectData.description),
+    location: safeString(projectData.location),
+    start_date: projectData.start_date,
+    end_date: projectData.end_date || null,
+    budget: projectData.budget !== "" ? Number(projectData.budget) : null,
+    status: safeString(projectData.status),
+    customer_priorities: safeString(customerData.priorities),
+    project_feedback_rating: null,
+    project_feedback_comment: null,
+    requirements: parseRequirements()
+  },
+  customer: {
+    name: safeString(customerData.name),                          // ✅ Pflichtfeld
+    industry: safeString(customerData.company),
+    location: safeString(projectData.location),                   // ggf. eigenständig setzen
+    number_of_employees: null,                                    // optional, UI fehlt
+    contact_person: safeString(customerData.position),
+    contact_email: safeString(customerData.email),
+    contact_phone: safeString(customerData.phone),
+    website: null                                                 // optional
+  }
+};
 
     try {
-      // API call to create the project
-      // Combining project and customer data
-      const formData = {
-        ...projectData,
-        customer: customerData
-      };
-      
-      // Comment: In a real application, an API call would follow
-      // const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8002';
-      // await axios.post(`${apiUrl}/project/create`, formData);
-      
-      console.log('Project data ready to send:', formData);
-      
-      // Show success notification
-      alert('Project successfully created!');
-      
-      // Navigate back to project overview
+      const response = await fetch('http://localhost:8002/project/add', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+  
+      if (!response.ok) throw new Error("Projekt konnte nicht erstellt werden");
+  
+      alert('Projekt erfolgreich erstellt!');
       navigate('/projects');
     } catch (error) {
-      console.error('Error creating project:', error);
-      alert('Error creating project. Please try again.');
+      console.error('Fehler beim Erstellen des Projekts:', error);
+      alert('Fehler beim Erstellen. Bitte erneut versuchen.');
     }
   };
+  
+  
 
   const handleCancel = () => {
     navigate('/projects');
