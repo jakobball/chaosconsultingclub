@@ -7,9 +7,9 @@ import uvicorn
 import os
 from dotenv import load_dotenv
 from sqlalchemy.orm import Session
-from config.db import SessionLocal
-from config.db import Base, engine
-from models import *
+from backend.config.db import SessionLocal
+from backend.config.db import Base, engine
+from backend.models import *
 
 # Import-Handling für verschiedene Umgebungen
 try:

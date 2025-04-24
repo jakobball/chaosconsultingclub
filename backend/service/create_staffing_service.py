@@ -4,10 +4,10 @@ from datetime import datetime
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from models import Staffing
-from config.db import SessionLocal
-from routes.project_ressource import get_db
-from service.n8nRequests import get_matching_profiles
+from backend.models import Staffing
+from backend.config.db import SessionLocal
+from backend.routes.project_ressource import get_db
+from backend.service.n8nRequests import get_matching_profiles
 
 
 def get_staffing_by_project_id(project_id: int):

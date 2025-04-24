@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from config.db import SessionLocal
-from schemes.Consultant import ConsultantCreate, ConsultantOut
-from service.consultant_service import (
+from backend.config.db import SessionLocal
+from backend.schemes.Consultant import ConsultantCreate, ConsultantOut
+from backend.service.consultant_service import (
     create_consultant,
     get_all_consultants,
     delete_consultant_by_id,

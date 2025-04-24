@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from models.Project import Project
-from schemes.project import ProjectCreate
+from backend.models.Project import Project
+from backend.schemes.project import ProjectCreate
 from fastapi import HTTPException
 
 import json

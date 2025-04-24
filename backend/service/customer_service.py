@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from models.Customer import Customer
-from schemes.Customer import CustomerCreate
+from backend.models.Customer import Customer
+from backend.schemes.Customer import CustomerCreate
 
 def create_customer(db: Session, customer_data: CustomerCreate):
     customer = Customer(**customer_data.dict())

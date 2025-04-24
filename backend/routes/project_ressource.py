@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from config.db import SessionLocal
-from schemes.project import ProjectCreate, ProjectOut
-from schemes.project_with_customer import ProjectAndCustomerCreate
-from service.customer_service import create_customer
-from service.project_service import (
+from backend.config.db import SessionLocal
+from backend.schemes.project import ProjectCreate, ProjectOut
+from backend.schemes.project_with_customer import ProjectAndCustomerCreate
+from backend.service.customer_service import create_customer
+from backend.service.project_service import (
     create_project,
     get_all_projects,
     delete_project_by_id,
