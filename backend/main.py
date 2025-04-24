@@ -7,28 +7,29 @@ import uvicorn
 import os
 from dotenv import load_dotenv
 from sqlalchemy.orm import Session
-from routes import recommendation_ressource, client_ressource
 from config.db import SessionLocal
-from routes import project_ressource
-from routes import consultant_ressource
 from config.db import Base, engine
 from models import *
-# ALT (funktioniert lokal)
-from routes import recommendation_ressource, client_ressource
 
-# NEU (funktioniert auf Render)
-from backend.routes import recommendation_ressource, client_ressource
-from backend.routes import project_ressource
-from backend.routes import consultant_ressource
+# Import-Handling für verschiedene Umgebungen
+try:
+    # Versuche lokale Imports (Entwicklungsumgebung)
+    from routes import recommendation_ressource, client_ressource, project_ressource, consultant_ressource
+    print("Lokale Imports erfolgreich geladen")
+except ImportError:
+    try:
+        # Versuche Render-Deployment-Imports
+        from backend.routes import recommendation_ressource, client_ressource, project_ressource, consultant_ressource
+        print("Render-Deployment-Imports erfolgreich geladen")
+    except ImportError as e:
+        print(f"Fehler beim Importieren der Module: {e}")
+        raise
 
 Base.metadata.create_all(bind=engine)
 
 # Lade Umgebungsvariablen aus backend/.env
 load_dotenv()
 
-
-
-#Test
 app = FastAPI()
 
 # CORS Middleware für Frontend-URLs
@@ -38,10 +39,8 @@ origins = [
 ]
 app.include_router(project_ressource.router)
 app.include_router(recommendation_ressource.router)
-
 app.include_router(consultant_ressource.router)
 app.include_router(client_ressource.router)
-
 
 # CORS Middleware einrichten
 app.add_middleware(
@@ -51,6 +50,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"]
 )
+
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8002)
-
