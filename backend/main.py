@@ -7,7 +7,7 @@ import uvicorn
 import os
 from dotenv import load_dotenv
 from sqlalchemy.orm import Session
-from routes import recommendation_ressource
+from routes import recommendation_ressource, client_ressource
 from config.db import SessionLocal
 from routes import project_ressource
 from routes import consultant_ressource
@@ -33,6 +33,7 @@ app.include_router(project_ressource.router)
 app.include_router(recommendation_ressource.router)
 
 app.include_router(consultant_ressource.router)
+app.include_router(client_ressource.router)
 
 
 # CORS Middleware einrichten

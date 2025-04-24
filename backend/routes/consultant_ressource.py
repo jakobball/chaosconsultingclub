@@ -6,7 +6,9 @@ from service.consultant_service import (
     create_consultant,
     get_all_consultants,
     delete_consultant_by_id,
-    update_consultant_by_id
+    update_consultant_by_id,
+    get_consultant_by_id  # ⬅️ hinzufügen
+
 )
 from typing import List
 
@@ -39,3 +41,10 @@ def delete_consultant(consultant_id: int, db: Session = Depends(get_db)):
 @router.put("/edit/{consultant_id}", response_model=ConsultantOut)
 def update_consultant(consultant_id: int, updated_data: ConsultantCreate, db: Session = Depends(get_db)):
     return update_consultant_by_id(db, consultant_id, updated_data)
+
+
+
+# Einzelnen Consultant abfragen
+@router.get("/get/{consultant_id}", response_model=ConsultantOut)
+def get_consultant(consultant_id: int, db: Session = Depends(get_db)):
+    return get_consultant_by_id(db, consultant_id)

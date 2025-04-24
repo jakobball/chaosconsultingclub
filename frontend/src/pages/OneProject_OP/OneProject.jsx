@@ -10,7 +10,6 @@ const parseBudget = (budgetValue) => {
   if (typeof budgetValue === 'number') return budgetValue;
   if (!budgetValue) return 0;
 
-  // Entferne Währungssymbole und Tausendertrennzeichen, ersetze Komma durch Punkt
   const numStr = budgetValue.toString()
     .replace(/[^\d,.-]/g, '')
     .replace(/\./g, '')
@@ -22,7 +21,6 @@ const parseBudget = (budgetValue) => {
 
 const formatApiDate = (dateString) => {
   if (!dateString) return new Date().toISOString().split('T')[0];
-
   if (/^\d{4}-\d{2}-\d{2}/.test(dateString)) return dateString;
 
   try {
@@ -88,65 +86,78 @@ const OneProject = () => {
     return value;
   };
 
-useEffect(() => {
-  const fetchProjectData = async () => {
-    if (id === 'new') {
-      setLoading(false);
-      return;
-    }
+  useEffect(() => {
+    const fetchProjectData = async () => {
+      if (id === 'new') {
+        setLoading(false);
+        return;
+      }
 
-    try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8002';
-      const projectResponse = await axios.get(`${apiUrl}/project/${id}`);
-      const loadedProject = projectResponse.data;
+      try {
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8002';
+        const projectResponse = await axios.get(`${apiUrl}/project/${id}`);
+        const loadedProject = projectResponse.data;
 
-      setProject({
-        ...loadedProject,
-        subtitle: loadedProject.customer_priorities || '',
-        client: loadedProject.customer_id ? `Client #${loadedProject.customer_id}` : 'Unknown',
-        startDate: formatDate(loadedProject.start_date),
-        endDate: formatDate(loadedProject.end_date),
-        goals: loadedProject.requirements?.map(r => `${r.skill} (${r.recommendedSeniority}) x${r.amount}`) || []
-      });
+        // Client-Name laden
+        let clientName = 'Unknown';
+        if (loadedProject.customer_id) {
+          try {
+            const clientResponse = await axios.get(`${apiUrl}/client/${loadedProject.customer_id}`);
+            clientName = clientResponse.data.name || `Client #${loadedProject.customer_id}`;
+          } catch (err) {
+            console.warn('Client info not found:', err.message);
+          }
+        }
 
-      // 👇 Staffing laden
-      const staffingResponse = await axios.get(`${apiUrl}/recommendation/getstaffing/${id}`);
-      const staffingData = staffingResponse.data;
+        setProject({
+          ...loadedProject,
+          subtitle: loadedProject.customer_priorities || '',
+          client: clientName,
+          startDate: formatDate(loadedProject.start_date),
+          endDate: formatDate(loadedProject.end_date),
+          goals: loadedProject.requirements?.map(r => `${r.skill} (${r.recommendedSeniority}) x${r.amount}`) || []
+        });
 
-      // Mappe Staffing-Einträge zu ConsultantCard-kompatiblen Objekten
-      const formattedConsultants = staffingData.map(entry => ({
-        id: entry.consultant_id,
-        name: `Consultant #${entry.consultant_id}`,
-        role: entry.requirement_level || 'Consultant',
-        experience: `${entry.score || 0}% Match`,
-        skills: Array.isArray(entry.requirement_skill) ? entry.requirement_skill : []
-      }));
+        const staffingResponse = await axios.get(`${apiUrl}/recommendation/getstaffing/${id}`);
+        const staffingData = staffingResponse.data;
 
-      setConsultants(formattedConsultants);
-      setError(null);
-      setLoading(false);
-    } catch (error) {
-      console.error('Error loading project or staffing data:', error);
-      setError('API connection error. Showing demo data.');
-      setProject(null);
-      setConsultants([]);
-      setLoading(false);
-    }
-  };
+        const formattedConsultants = staffingData.map(entry => {
+          const scoreValue = entry.score || 0;
+          return {
+            id: entry.consultant_id,
+            name: `Consultant #${entry.consultant_id}`,
+            role: entry.requirement_level || 'Consultant',
+            experience: `${scoreValue}/10 MatchPoint`,
+            skills: Array.isArray(entry.requirement_skill) ? entry.requirement_skill : [],
+            profileImage: `https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png`
+          };
+        });
 
-  fetchProjectData();
+        setConsultants(formattedConsultants);
+        setError(null);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error loading project or staffing data:', error);
+        setError('API connection error. Showing demo data.');
+        setProject(null);
+        setConsultants([]);
+        setLoading(false);
+      }
+    };
 
-  const handleClickOutside = (event) => {
-    if (statusDropdownRef.current && !statusDropdownRef.current.contains(event.target)) {
-      setStatusDropdownOpen(false);
-    }
-  };
+    fetchProjectData();
 
-  document.addEventListener('mousedown', handleClickOutside);
-  return () => {
-    document.removeEventListener('mousedown', handleClickOutside);
-  };
-}, [id]);
+    const handleClickOutside = (event) => {
+      if (statusDropdownRef.current && !statusDropdownRef.current.contains(event.target)) {
+        setStatusDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [id]);
 
   const handleSendToClient = () => {
     alert(`Project "${project?.title}" has been sent to the client!`);
@@ -159,7 +170,6 @@ useEffect(() => {
   const handleAddConsultant = (e) => {
     e.preventDefault();
     if (!newConsultant.trim()) return;
-
     alert(`Consultant "${newConsultant}" added to project`);
     setNewConsultant('');
   };
@@ -178,38 +188,31 @@ useEffect(() => {
 
   const handleStatusChange = async (newStatus) => {
     if (!project || project.status === newStatus || updatingStatus) return;
-
     setUpdatingStatus(true);
+
     try {
       const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8002';
-
       const updatedProject = {
-  title: project.title || "",
-  description: project.description || "",
-  location: project.location || "",
-  start_date: formatApiDate(project.start_date),
-  end_date: formatApiDate(project.end_date),
-  budget: parseBudget(project.budget),
-  status: newStatus,
-  customer_id: typeof project.customer_id === 'number' ? project.customer_id : 0,
-  customer_priorities: project.customer_priorities || "",
-  project_feedback_rating: null,
-  project_feedback_comment: null,
-  requirements: Array.isArray(project.requirements) ? project.requirements : []
-};
-
-
+        title: project.title || "",
+        description: project.description || "",
+        location: project.location || "",
+        start_date: formatApiDate(project.start_date),
+        end_date: formatApiDate(project.end_date),
+        budget: parseBudget(project.budget),
+        status: newStatus,
+        customer_id: typeof project.customer_id === 'number' ? project.customer_id : 0,
+        customer_priorities: project.customer_priorities || "",
+        project_feedback_rating: null,
+        project_feedback_comment: null,
+        requirements: Array.isArray(project.requirements) ? project.requirements : []
+      };
 
       console.log("Sending update with data:", updatedProject);
-    console.log(updatedProject)
-
       await axios.put(`${apiUrl}/project/edit/${id}`, updatedProject);
       setProject({ ...project, status: newStatus });
       setStatusDropdownOpen(false);
     } catch (error) {
       console.error('Error updating project status:', error);
-      console.error('Update failed:', error.response?.data || error.message);
-
       alert('Failed to update project status.');
     } finally {
       setUpdatingStatus(false);
@@ -243,11 +246,7 @@ useEffect(() => {
             {statusDropdownOpen && (
               <div className="status-dropdown-content">
                 {statusOptions.map(option => (
-                  <div
-                    key={option.value}
-                    className={`status-option ${option.value}`}
-                    onClick={() => handleStatusChange(option.value)}
-                  >
+                  <div key={option.value} className={`status-option ${option.value}`} onClick={() => handleStatusChange(option.value)}>
                     {option.label}
                   </div>
                 ))}
@@ -324,6 +323,7 @@ useEffect(() => {
                   consultant={consultant}
                   onAccept={() => handleAcceptConsultant(consultant.id)}
                   onReject={() => handleRejectConsultant(consultant.id)}
+                  profileImage={consultant.profileImage}
                 />
               ))
             ) : (
