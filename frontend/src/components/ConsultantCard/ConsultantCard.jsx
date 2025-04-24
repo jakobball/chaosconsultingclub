@@ -15,7 +15,7 @@ const ConsultantCard = ({ consultant, onAccept, onReject }) => {
         </button>
       </div>
       <div className="consultant-avatar">
-        <img src={consultant.avatar || 'https://via.placeholder.com/80'} alt={consultant.name} />
+        <img src={consultant.profile_image || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'} alt={consultant.name} />
       </div>
 
       <div className="consultant-info">

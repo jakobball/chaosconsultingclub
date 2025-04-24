@@ -6,6 +6,22 @@ from fastapi import HTTPException
 import json
 
 
+def get_consultant_by_id(db: Session, consultant_id: int):
+    consultant = db.query(Consultant).filter(Consultant.id == consultant_id).first()
+    if not consultant:
+        raise HTTPException(status_code=404, detail="Consultant not found")
+
+    # JSON-Felder zurückkonvertieren für Response
+    try:
+        consultant.certificates = json.loads(consultant.certificates or "[]")
+        consultant.technologies = json.loads(consultant.technologies or "[]")
+        consultant.languages_spoken = json.loads(consultant.languages_spoken or "[]")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Error decoding consultant fields")
+
+    return consultant
+
+
 def create_consultant(db: Session, consultant_data: ConsultantCreate):
     data_dict = consultant_data.dict()
 
