@@ -9,7 +9,7 @@ class Staffing(Base):
     requirement_skill = Column(String)
     requirement_level = Column(String)
     requirement_slot_index = Column(Integer)
-    score = Column(Float)
+    score = Column(Float)  # ✅ Float statt Integer
     similar_projects = Column(Text)
     status = Column(String)  # proposed, accepted, rejected
     customer_feedback_rating = Column(Integer)

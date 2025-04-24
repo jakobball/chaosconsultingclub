@@ -75,7 +75,7 @@ def create_suggestion(project_id: str, query: str = ""):
             try:
                 consultant_id = int(entry.get("consultant_id"))
                 project_id = int(entry.get("project_id"))
-                score = int(entry.get("score"))
+                score = float(entry.get("score"))
 
                 new_staffing = Staffing(
                     consultant_id=consultant_id,
