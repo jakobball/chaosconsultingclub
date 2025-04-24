@@ -178,18 +178,41 @@ return {
   }, [id]);
 
   const handleSendToClient = () => {
-    alert(`Project "${project?.title}" has been sent to the client!`);
+    alert("Request was sent to consultant");
   };
 
   const handleBackToProjects = () => {
     navigate('/projects');
   };
 
-  const handleAddConsultant = (e) => {
+const handleAddConsultant = async (e) => {
     e.preventDefault();
     if (!newConsultant.trim()) return;
-    alert(`Consultant "${newConsultant}" added to project`);
-    setNewConsultant('');
+
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8002';
+
+      const payload = {
+        project_id: parseInt(id),      // id kommt aus useParams()
+        query: newConsultant.trim()    // Consultant-Name
+      };
+
+      const response = await fetch(`${apiUrl}/recommendation/query`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) throw new Error("Suggestion creation failed");
+
+      alert(`Consultant "${newConsultant}" wurde übermittelt`);
+      setNewConsultant('');
+    } catch (error) {
+      console.error('Fehler beim Senden der Consultant-Anfrage:', error);
+      alert('Fehler beim Senden. Bitte erneut versuchen.');
+    }
   };
 
   const handleAcceptConsultant = (consultantId) => {
@@ -328,12 +351,18 @@ const handleCustomerClick = () => {
             <form className="add-consultant-form" onSubmit={handleAddConsultant}>
               <input
                 type="text"
-                placeholder="Add consultant name..."
+                placeholder="Enhance Staffing ...."
                 value={newConsultant}
                 onChange={(e) => setNewConsultant(e.target.value)}
                 className="consultant-input"
               />
-              <button type="submit" className="add-consultant-btn">Add</button>
+              <button 
+                type="submit" 
+                className="add-consultant-btn" 
+                style={{ padding: '8px 15px', minWidth: '80px' }}
+              >
+                Add
+              </button>
             </form>
           </div>
 
@@ -358,7 +387,7 @@ const handleCustomerClick = () => {
 
         <div className="project-actions">
           <button className="send-client-btn" onClick={handleSendToClient}>
-            Send to Client
+            Request Consultants
           </button>
         </div>
       </div>
@@ -367,3 +396,4 @@ const handleCustomerClick = () => {
 };
 
 export default OneProject;
+
