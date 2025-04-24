@@ -1,6 +1,6 @@
 from pydantic import BaseModel
-from schemes.project import ProjectCreate
-from schemes.Customer import CustomerCreate
+from backend.schemes.project import ProjectCreate
+from backend.schemes.Customer import CustomerCreate
 
 class ProjectAndCustomerCreate(BaseModel):
     project: ProjectCreate
