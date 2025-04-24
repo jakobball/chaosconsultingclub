@@ -14,12 +14,14 @@ from backend.models import *
 # Import-Handling für verschiedene Umgebungen
 try:
     # Versuche lokale Imports (Entwicklungsumgebung)
-    from routes import recommendation_ressource, client_ressource, project_ressource, consultant_ressource
+    from backend.routes import recommendation_ressource, client_ressource, project_ressource, consultant_ressource
+
     print("Lokale Imports erfolgreich geladen")
 except ImportError:
     try:
         # Versuche Render-Deployment-Imports
         from backend.routes import recommendation_ressource, client_ressource, project_ressource, consultant_ressource
+
         print("Render-Deployment-Imports erfolgreich geladen")
     except ImportError as e:
         print(f"Fehler beim Importieren der Module: {e}")
