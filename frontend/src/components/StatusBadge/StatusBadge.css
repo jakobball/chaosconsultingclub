@@ -1,0 +1,30 @@
+.status-badge {
+  display: inline-block;
+  padding: 0.3rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  white-space: nowrap;
+  margin: 0.3rem 0 0.5rem 0;
+  width: fit-content; /* Sorgt dafür, dass das Badge nur so breit wie der Inhalt ist */
+}
+
+.status-planned {
+  background-color: #f0f9ff;
+  color: #0077cc;
+}
+
+.status-active {
+  background-color: #fff8e6;
+  color: #f59e0b;
+}
+
+.status-completed {
+  background-color: #f0fdf4;
+  color: #16a34a;
+}
+
+.status-cancelled {
+  background-color: #fef2f2;
+  color: #dc2626;
+}
