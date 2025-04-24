@@ -68,6 +68,9 @@ const UploadProject = () => {
     if (!projectData.description.trim()) newErrors.description = 'Description is required';
     if (!projectData.location.trim()) newErrors.location = 'Location is required';
     if (!projectData.start_date) newErrors.start_date = 'Start date is required';
+    if (!projectData.end_date) newErrors.end_date = 'End date is required';
+    if (!projectData.budget) newErrors.budget = 'Budget is required';
+    if (!projectData.required_skills.trim()) newErrors.required_skills = 'Required skills are required';
 
     // Budget validation
     if (projectData.budget && isNaN(Number(projectData.budget))) {
@@ -92,6 +95,9 @@ const UploadProject = () => {
     if (!customerData.name.trim()) newErrors.name = 'Name is required';
     if (!customerData.email.trim()) newErrors.email = 'Email is required';
     if (!customerData.company.trim()) newErrors.company = 'Company is required';
+    if (!customerData.phone.trim()) newErrors.phone = 'Phone is required';
+    if (!customerData.position.trim()) newErrors.position = 'Position is required';
+    if (!customerData.priorities.trim()) newErrors.priorities = 'Priorities are required';
 
     // Email validation
     if (customerData.email && !/\S+@\S+\.\S+/.test(customerData.email)) {
@@ -171,16 +177,18 @@ const payload = {
 };
 
     try {
-      const response = await fetch('http://localhost:8002/project/add', {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8002';
+
+      const response = await fetch(`${apiUrl}/project/add`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(payload)
       });
-  
+
       if (!response.ok) throw new Error("Projekt konnte nicht erstellt werden");
-  
+
       alert('Projekt erfolgreich erstellt!');
       navigate('/projects');
     } catch (error) {
@@ -188,8 +196,8 @@ const payload = {
       alert('Fehler beim Erstellen. Bitte erneut versuchen.');
     }
   };
-  
-  
+
+
 
   const handleCancel = () => {
     navigate('/projects');
@@ -208,6 +216,7 @@ const payload = {
           value={projectData.title}
           onChange={handleProjectInputChange}
           className={errors.title ? 'error' : ''}
+          required
         />
         {errors.title && <span className="error-message">{errors.title}</span>}
       </div>
@@ -221,12 +230,13 @@ const payload = {
           onChange={handleProjectInputChange}
           rows="4"
           className={errors.description ? 'error' : ''}
+          required
         />
         {errors.description && <span className="error-message">{errors.description}</span>}
       </div>
-      
+
       <div className="form-group">
-        <label htmlFor="required_skills">Required Skills</label>
+        <label htmlFor="required_skills">Required Skills*</label>
         <textarea
           id="required_skills"
           name="required_skills"
@@ -235,6 +245,7 @@ const payload = {
           rows="3"
           placeholder="e.g. Python, React, UI/UX Design, Marketing, Financial Analysis"
           className={errors.required_skills ? 'error' : ''}
+          required
         />
         {errors.required_skills && <span className="error-message">{errors.required_skills}</span>}
         <span className="help-text">Please specify the skills needed for this project (comma separated).</span>
@@ -249,6 +260,7 @@ const payload = {
           value={projectData.location}
           onChange={handleProjectInputChange}
           className={errors.location ? 'error' : ''}
+          required
         />
         {errors.location && <span className="error-message">{errors.location}</span>}
       </div>
@@ -263,12 +275,13 @@ const payload = {
             value={projectData.start_date}
             onChange={handleProjectInputChange}
             className={errors.start_date ? 'error' : ''}
+            required
           />
           {errors.start_date && <span className="error-message">{errors.start_date}</span>}
         </div>
 
         <div className="form-group">
-          <label htmlFor="end_date">End Date</label>
+          <label htmlFor="end_date">End Date*</label>
           <input
             type="date"
             id="end_date"
@@ -276,13 +289,14 @@ const payload = {
             value={projectData.end_date}
             onChange={handleProjectInputChange}
             className={errors.end_date ? 'error' : ''}
+            required
           />
           {errors.end_date && <span className="error-message">{errors.end_date}</span>}
         </div>
       </div>
 
       <div className="form-group">
-        <label htmlFor="budget">Budget (€)</label>
+        <label htmlFor="budget">Budget (€)*</label>
         <input
           type="number"
           id="budget"
@@ -290,6 +304,7 @@ const payload = {
           value={projectData.budget}
           onChange={handleProjectInputChange}
           className={errors.budget ? 'error' : ''}
+          required
         />
         {errors.budget && <span className="error-message">{errors.budget}</span>}
       </div>
@@ -319,6 +334,7 @@ const payload = {
             value={customerData.name}
             onChange={handleCustomerInputChange}
             className={errors.name ? 'error' : ''}
+            required
           />
           {errors.name && <span className="error-message">{errors.name}</span>}
         </div>
@@ -332,6 +348,7 @@ const payload = {
             value={customerData.email}
             onChange={handleCustomerInputChange}
             className={errors.email ? 'error' : ''}
+            required
           />
           {errors.email && <span className="error-message">{errors.email}</span>}
         </div>
@@ -347,35 +364,42 @@ const payload = {
             value={customerData.company}
             onChange={handleCustomerInputChange}
             className={errors.company ? 'error' : ''}
+            required
           />
           {errors.company && <span className="error-message">{errors.company}</span>}
         </div>
 
         <div className="form-group">
-          <label htmlFor="phone">Phone</label>
+          <label htmlFor="phone">Phone*</label>
           <input
             type="tel"
             id="phone"
             name="phone"
             value={customerData.phone}
             onChange={handleCustomerInputChange}
+            className={errors.phone ? 'error' : ''}
+            required
           />
+          {errors.phone && <span className="error-message">{errors.phone}</span>}
         </div>
       </div>
 
       <div className="form-group">
-        <label htmlFor="position">Position</label>
+        <label htmlFor="position">Position*</label>
         <input
           type="text"
           id="position"
           name="position"
           value={customerData.position}
           onChange={handleCustomerInputChange}
+          className={errors.position ? 'error' : ''}
+          required
         />
+        {errors.position && <span className="error-message">{errors.position}</span>}
       </div>
 
       <div className="form-group">
-        <label htmlFor="priorities">Customer Priorities</label>
+        <label htmlFor="priorities">Customer Priorities*</label>
         <textarea
           id="priorities"
           name="priorities"
@@ -384,6 +408,7 @@ const payload = {
           rows="3"
           placeholder="e.g. short project duration, budget adherence, high quality, innovation"
           className={errors.priorities ? 'error' : ''}
+          required
         />
         {errors.priorities && <span className="error-message">{errors.priorities}</span>}
         <span className="help-text">Here you can specify which aspects are particularly important to the client.</span>
@@ -404,7 +429,7 @@ const payload = {
     <div className="upload-project-page">
       <div className="upload-project-container">
         <h1>Create New Project</h1>
-        
+
         <div className="form-step-indicator">
           <div className={`step ${currentStep === 1 ? 'active' : ''}`}>1 Project Details</div>
           <div className={`step ${currentStep === 2 ? 'active' : ''}`}>2 Customer Information</div>
@@ -419,4 +444,3 @@ const payload = {
 };
 
 export default UploadProject;
-
