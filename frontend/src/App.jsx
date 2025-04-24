@@ -16,12 +16,12 @@ function App() {
           <Route path="/project/new" element={<UploadProject />} />
           <Route path="/project/:id" element={<OneProject />} />
           <Route path="/" element={<Navigate to="/projects" />} />
-          <Route path="/ConsultantView" element={
+          <Route path="/ConsultantView/:id" element={
             <ErrorBoundary>
               <ConsultantView />
             </ErrorBoundary>
           } />
-          <Route path="/customers" element={
+          <Route path="/customers/:id" element={
             <ErrorBoundary>
               <CustomerOverview />
             </ErrorBoundary>

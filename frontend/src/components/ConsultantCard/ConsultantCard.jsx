@@ -1,14 +1,26 @@
 // frontend/src/components/ConsultantCard/ConsultantCard.jsx
 import React from 'react';
 import './ConsultantCard.css';
+import { useNavigate } from 'react-router-dom';
 
 const ConsultantCard = ({ consultant, onAccept, onReject }) => {
+  const navigate = useNavigate();
+
+  const handleCardClick = () => {
+    navigate(`/ConsultantView/${consultant.id}`);
+  };
+
+  const handleRejectClick = (e) => {
+    e.stopPropagation(); // verhindert Klick auf Card
+    onReject();
+  };
+
   return (
-    <div className="consultant-card">
+    <div className="consultant-card clickable" onClick={handleCardClick}>
       <div className="consultant-actions">
-        <button 
-          className="consultant-action-btn reject-btn" 
-          onClick={onReject}
+        <button
+          className="consultant-action-btn reject-btn"
+          onClick={handleRejectClick}
           title="Consultant ablehnen"
         >
           ✕

@@ -79,6 +79,16 @@
   margin: 0;
   margin-bottom: 0.5rem;
 }
+/* In CustomerOverview.css */
+.clickable {
+  cursor: pointer;
+  color: #3ed3ae;
+  transition: color 0.2s ease;
+}
+
+.clickable:hover {
+  color: #2ab49c;
+}
 
 .project-subtitle {
   color: var(--mint-400);
@@ -357,7 +367,7 @@
   top: 100%;
   margin-top: 0.5rem;
   min-width: 160px;
-  background-color: var(--darker-gray, #1a1a1a);
+  background-color: var(#1a1a1a);
   border-radius: var(--radius-sm);
   box-shadow: var(--shadow);
   z-index: 100;

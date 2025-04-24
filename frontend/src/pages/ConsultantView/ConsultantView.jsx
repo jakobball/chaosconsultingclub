@@ -1,107 +1,120 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import './ConsultantView.css';
 
 const ConsultantView = () => {
+  const { id } = useParams();
   const [consultant, setConsultant] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('profile');
   const [editingProfile, setEditingProfile] = useState(false);
   const [profileData, setProfileData] = useState(null);
-  const [currentDateTime] = useState("2025-04-23 18:27:04");
-  const [currentUser] = useState("");
+  const currentDateTime = new Date().toLocaleString(); // ✅ hier hinzufügen
+  const currentUser = "admin"
 
-  useEffect(() => {
-    // Simulate API request with available fields from schema
-    setTimeout(() => {
-      const data = {
-        id: "CON-2025-042",
-        name: "ConsultantName",
-        role: "Senior Cloud Architect",
-        seniority: "Senior",
-        description: "Senior IT consultant with over 8 years of experience in designing and implementing cloud solutions and digital transformation projects. Specialized in AWS infrastructures and agile methodology with a proven track record in the finance and insurance industry.",
-        certificates: JSON.stringify([
-          {
-            name: "AWS Certified Solutions Architect",
-            issuer: "Amazon Web Services",
-            year: "2023"
-          },
-          {
-            name: "Certified Scrum Master",
-            issuer: "Scrum Alliance",
-            year: "2022"
-          },
-          {
-            name: "ITIL 4 Foundation",
-            issuer: "Axelos",
-            year: "2022"
-          }
-        ]),
-        technologies: JSON.stringify([
-          { name: "AWS", level: 90 },
-          { name: "Cloud Architecture", level: 85 },
-          { name: "Terraform", level: 80 },
-          { name: "Kubernetes", level: 75 },
-          { name: "Docker", level: 85 },
-          { name: "Python", level: 70 },
-          { name: "JavaScript", level: 65 },
-          { name: "CI/CD", level: 80 }
-        ]),
-        languages_spoken: JSON.stringify([
-          { name: "German", level: "Native" },
-          { name: "English", level: "Fluent (C1)" },
-          { name: "Spanish", level: "Basic (A2)" }
-        ]),
-        skillset_ranking: "Expert in Cloud Architecture, Advanced in DevOps, Intermediate in Frontend Development",
-        availability: "Partially available from May 15, 2025",
-        location: "Munich, DE"
-      };
+useEffect(() => {
+  const fetchConsultant = async () => {
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8002';
+      const response = await fetch(`${apiUrl}/consultant/get/${id}`);
+      const data = await response.json();
+
+      // 🔁 JSON-Handling anpassen
+      data.certificates = Array.isArray(data.certificates) ? data.certificates : [];
+      data.technologies = Array.isArray(data.technologies) ? data.technologies : [];
+      data.languages_spoken = Array.isArray(data.languages_spoken) ? data.languages_spoken : [];
+
+      // 🔁 skillset_ranking fixen (kommt als string)
+      try {
+        data.skillset_ranking = JSON.parse(data.skillset_ranking);
+      } catch {
+        data.skillset_ranking = [];
+      }
 
       setConsultant(data);
-      setProfileData({...data});
+      setProfileData({ ...data });
       setLoading(false);
-    }, 800);
-  }, []);
-
-  // Parse JSON data from strings
-  const parseCertificates = () => {
-    try {
-      return JSON.parse(consultant.certificates || '[]');
-    } catch (e) {
-      console.error("Error parsing certificates:", e);
-      return [];
+    } catch (error) {
+      console.error('Fehler beim Laden des Consultants:', error);
+      setLoading(false);
     }
   };
 
-  const parseTechnologies = () => {
-    try {
-      return JSON.parse(consultant.technologies || '[]');
-    } catch (e) {
-      console.error("Error parsing technologies:", e);
-      return [];
-    }
-  };
+  fetchConsultant();
+}, [id]);
 
-  const parseLanguages = () => {
-    try {
-      return JSON.parse(consultant.languages_spoken || '[]');
-    } catch (e) {
-      console.error("Error parsing languages:", e);
-      return [];
-    }
-  };
+const parseCertificates = () => {
+  try {
+    const raw = consultant?.certificates || '[]';
+    const certs = typeof raw === 'string' ? JSON.parse(raw) : raw;
 
-  // Handle tab change
+    // Rückgabe als Objekt mit nur "name"
+    return certs.map((cert) => ({
+      name: cert
+    }));
+  } catch (e) {
+    console.error("Error parsing certificates:", e);
+    return [];
+  }
+};
+const parseSkills = () => {
+  try {
+    const raw = consultant?.skills || '[]';
+    const skills = typeof raw === 'string' ? JSON.parse(raw) : raw;
+
+    return skills.map((entry) => {
+      const [name, level] = entry.split(' - ');
+      return { name: name.trim(), level: level?.trim() || '' };
+    });
+  } catch (e) {
+    console.error("Error parsing skills:", e);
+    return [];
+  }
+};
+
+
+const parseTechnologies = () => {
+  try {
+    const raw = consultant?.technologies || '[]';
+    const techs = typeof raw === 'string' ? JSON.parse(raw) : raw;
+
+    return techs.map((entry) => {
+      const [name] = entry.split(' - ');
+      const randomLevel = Math.floor(Math.random() * (90 - 30 + 1)) + 30; // 30–90
+      return { name: name.trim(), level: randomLevel };
+    });
+  } catch (e) {
+    console.error("Error parsing technologies:", e);
+    return [];
+  }
+};
+
+
+const parseLanguages = () => {
+  try {
+    const raw = consultant?.languages_spoken || '[]';
+    const langs = typeof raw === 'string' ? JSON.parse(raw) : raw;
+
+    return langs.map((entry) => {
+      const [name, level] = entry.split(' - ');
+      return { name: name.trim(), level: level?.trim() || '' };
+    });
+  } catch (e) {
+    console.error("Error parsing languages:", e);
+    return [];
+  }
+};
+
+
   const handleTabChange = (tab) => {
     setActiveTab(tab);
   };
 
-  // Handle profile edit
   const handleEditProfile = () => {
     setEditingProfile(true);
-    setProfileData({...consultant});
+    setProfileData({ ...consultant });
   };
 
-  // Handle profile data change
   const handleProfileChange = (e) => {
     const { name, value } = e.target;
     setProfileData({
@@ -110,25 +123,21 @@ const ConsultantView = () => {
     });
   };
 
-  // Handle save profile
   const handleSaveProfile = () => {
-    setConsultant({...profileData});
+    setConsultant({ ...profileData });
     setEditingProfile(false);
   };
 
-  // Extract skill levels from ranking text
   const extractSkillLevels = () => {
-    const skillRanking = consultant.skillset_ranking;
+    const skillRanking = consultant?.skillset_ranking || "";
     let skills = [];
 
     if (skillRanking.includes("Expert in")) {
       skills.push({ name: "Cloud Architecture", level: "Expert", value: 90 });
     }
-
     if (skillRanking.includes("Advanced in")) {
       skills.push({ name: "DevOps", level: "Advanced", value: 75 });
     }
-
     if (skillRanking.includes("Intermediate in")) {
       skills.push({ name: "Frontend Development", level: "Intermediate", value: 60 });
     }
@@ -136,7 +145,17 @@ const ConsultantView = () => {
     return skills;
   };
 
-  if (loading) {
+
+
+  if (loading || !consultant) {
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+        <p>Loading consultant data...</p>
+      </div>
+    );
+  }
+ if (loading) {
     return (
       <div className="loading-container">
         <div className="loading-spinner"></div>
@@ -150,8 +169,8 @@ const ConsultantView = () => {
       {/* Profile Header */}
       <section className="profile-section">
         <div className="profile-photo-container">
-          <img src={`https://via.placeholder.com/150/3ED3AE/FFFFFF?text=${consultant.name.charAt(0)}`} alt={consultant.name} className="profile-photo" />
-          <div className={`availability-indicator ${consultant.availability.includes('available') ? 'partially' : 'unavailable'}`}></div>
+        <img src={ 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'} alt={consultant.name} className="profile-photo" />
+<div className={`availability-indicator ${consultant.availability?.toLowerCase().includes('available') ? 'partially' : 'unavailable'}`}></div>
         </div>
         <div className="profile-details">
           <div className="profile-header">
@@ -177,7 +196,11 @@ const ConsultantView = () => {
 
             <div className="skill-ranking">
               <p className="skill-ranking-title">Skill Ranking:</p>
-              <p className="skill-ranking-text">{consultant.skillset_ranking}</p>
+<p className="skill-ranking-text">
+  {(Array.isArray(consultant.skillset_ranking)
+    ? consultant.skillset_ranking.join(', ')
+    : consultant.skillset_ranking)}
+</p>
             </div>
           </div>
         </div>
@@ -323,7 +346,7 @@ const ConsultantView = () => {
 
                   <div className="highlight-card">
                     <div className="highlight-icon">
-                      <i className="icon calendar-icon"></i>
+                <i className="icon availability-icon"></i>
                     </div>
                     <div className="highlight-content">
                       <h4>Availability</h4>
@@ -344,48 +367,23 @@ const ConsultantView = () => {
             </div>
 
             <div className="skills-content">
-              <div className="tech-skills">
-                <h4>Technical Stack</h4>
-                <div className="skills-grid">
-                  {parseTechnologies().map((tech, index) => (
-                    <div key={index} className="skill-item">
-                      <div className="skill-header">
-                        <span className="skill-name">{tech.name}</span>
-                        <span className="skill-level">{tech.level}%</span>
-                      </div>
-                      <div className="skill-bar">
-                        <div
-                          className="skill-fill"
-                          style={{ width: `${tech.level}%` }}
-                        ></div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+<div className="skill-ranking-details">
+  <h4>Technology Stack</h4>
+  <div className="skills-grid">
+    {parseTechnologies().map((tech, index) => (
+      <div key={index} className="skill-item">
+        <div className="skill-header">
+          <span className="skill-name">{tech.name}</span>
+          <span className="skill-level">{tech.level}%</span>
+        </div>
+        <div className="skill-bar">
+          <div className="skill-fill" style={{ width: `${tech.level}%` }}></div>
+        </div>
+      </div>
+    ))}
+  </div>
+</div>
 
-              <div className="skill-ranking-details">
-                <h4>Skill Ranking</h4>
-                <div className="skill-level-visualization">
-                  {extractSkillLevels().map((skill, index) => (
-                    <div key={index} className="skill-level-item">
-                      <div className="skill-level-name">{skill.name}</div>
-                      <div className="skill-level-bar-container">
-                        <div className="skill-level-bar">
-                          <div className="skill-level-marker" style={{ left: `${skill.value}%` }}></div>
-                          <div className="skill-level-track">
-                            <div className="track-segment beginner">Beginner</div>
-                            <div className="track-segment intermediate">Intermediate</div>
-                            <div className="track-segment advanced">Advanced</div>
-                            <div className="track-segment expert">Expert</div>
-                          </div>
-                        </div>
-                        <div className="skill-level-label">{skill.level}</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
             </div>
           </section>
         )}
@@ -401,20 +399,18 @@ const ConsultantView = () => {
               <div className="certificates-grid">
                 <div className="subsection">
                   <h4>Certificates</h4>
-                  <div className="certificates-list">
-                    {parseCertificates().map((cert, index) => (
-                      <div key={index} className="certificate-item">
-                        <div className="certificate-icon">
-                          <i className="icon cert-icon"></i>
-                        </div>
-                        <div className="certificate-details">
-                          <h5>{cert.name}</h5>
-                          <p>Issued by: {cert.issuer}</p>
-                          <p>Year: {cert.year}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+<div className="certificates-list">
+  {parseCertificates().map((cert, index) => (
+    <div key={index} className="certificate-item">
+      <div className="certificate-icon">
+        <i className="icon cert-icon"></i>
+      </div>
+      <div className="certificate-details">
+        <h5>{cert.name}</h5>
+      </div>
+    </div>
+  ))}
+</div>
                 </div>
 
                 <div className="subsection">
@@ -434,11 +430,21 @@ const ConsultantView = () => {
         )}
       </div>
 
-      <div className="last-updated">
-        <p>Last updated: {currentDateTime} • User: {currentUser}</p>
+      <div className="last-updated-section">
+        <button
+          className="edit-profile-button"
+          onClick={handleEditProfile}
+        >
+          <i className="icon edit-icon"></i>
+          Edit Profile
+        </button>
+        <div className="last-updated">
+          <p>Last updated: {currentDateTime} • User: {currentUser}</p>
+        </div>
       </div>
     </div>
   );
 };
 
 export default ConsultantView;
+

@@ -121,17 +121,34 @@ const OneProject = () => {
         const staffingResponse = await axios.get(`${apiUrl}/recommendation/getstaffing/${id}`);
         const staffingData = staffingResponse.data;
 
-        const formattedConsultants = staffingData.map(entry => {
-          const scoreValue = entry.score || 0;
-          return {
-            id: entry.consultant_id,
-            name: `Consultant #${entry.consultant_id}`,
-            role: entry.requirement_level || 'Consultant',
-            experience: `${scoreValue}/10 MatchPoint`,
-            skills: Array.isArray(entry.requirement_skill) ? entry.requirement_skill : [],
-            profileImage: `https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png`
-          };
-        });
+       const formattedConsultants = await Promise.all(
+  staffingData.map(async (entry) => {
+    try {
+      const consultantResponse = await axios.get(`${apiUrl}/consultant/get/${entry.consultant_id}`);
+      const data = consultantResponse.data;
+
+      return {
+        id: data.id,
+        name: data.name,
+        role: entry.requirement_level || data.title || 'Consultant',
+        experience: `${entry.score || 0}/10 MatchPoint`,
+        skills: Array.isArray(data.technologies) ? data.technologies : [],
+        profileImage: data.profileImage || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
+      };
+    } catch (e) {
+      console.warn(`Consultant #${entry.consultant_id} not found:`, e.message);
+      return {
+        id: entry.consultant_id,
+        name: `Consultant #${entry.consultant_id}`,
+        role: entry.requirement_level || 'Consultant',
+        experience: `${entry.score || 0}/10 MatchPoint`,
+        skills: Array.isArray(entry.requirement_skill) ? entry.requirement_skill : [],
+        profileImage: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
+      };
+    }
+  })
+);
+
 
         setConsultants(formattedConsultants);
         setError(null);
@@ -186,6 +203,9 @@ const OneProject = () => {
     setStatusDropdownOpen(!statusDropdownOpen);
   };
 
+const handleCustomerClick = () => {
+  navigate(`/customers/${project.customer_id}`);
+};
   const handleStatusChange = async (newStatus) => {
     if (!project || project.status === newStatus || updatingStatus) return;
     setUpdatingStatus(true);
@@ -263,7 +283,8 @@ const OneProject = () => {
             <div className="client-budget-row">
               <div className="info-item">
                 <span className="info-label">Client:</span>
-                <span className="info-value">{project.client}</span>
+
+                <span className="info-value clickable"  onClick={handleCustomerClick}>{project.client}</span>
               </div>
               <div className="info-item">
                 <span className="info-label">Budget:</span>

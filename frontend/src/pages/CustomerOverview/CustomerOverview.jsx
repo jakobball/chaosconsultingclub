@@ -1,5 +1,7 @@
 import React from 'react';
 import './CustomerOverview.css';
+import { useNavigate } from 'react-router-dom';
+
 
 function CustomerOverview() {
   // Dummy customer data for display
@@ -13,6 +15,8 @@ function CustomerOverview() {
     contact_phone: "+49 123 456789",
     website: "https://www.acmecorp.com"
   };
+const navigate = useNavigate();
+
 
   return (
     <div className="customer-overview-container">
