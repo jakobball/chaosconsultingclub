@@ -3,5 +3,3 @@ uvicorn[standard]
 python-dotenv
 pytest
 pydantic
-sqlalchemy
-mysql-connector-python
