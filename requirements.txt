@@ -5,3 +5,4 @@ pytest
 pydantic
 requests
 sqlalchemy
+mysql-connector-python
