@@ -1,18 +1,26 @@
-// frontend/src/components/ConsultantCard/ConsultantCard.jsx
 import React from 'react';
 import './ConsultantCard.css';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
-const ConsultantCard = ({ consultant, onAccept, onReject }) => {
+const ConsultantCard = ({ consultant }) => {
   const navigate = useNavigate();
 
   const handleCardClick = () => {
     navigate(`/ConsultantView/${consultant.id}`);
   };
 
-  const handleRejectClick = (e) => {
-    e.stopPropagation(); // verhindert Klick auf Card
-    onReject();
+  const handleRejectClick = async (e) => {
+    e.stopPropagation(); // verhindert Weiterleitung zur Card
+
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8002';
+    try {
+      await axios.delete(`${apiUrl}/recommendation/deleteStaffing/${consultant.project_id}/${consultant.id}`);
+      window.location.reload(); // Seite neu laden nach erfolgreichem Delete
+    } catch (err) {
+      console.error("Fehler beim Löschen des Consultants:", err);
+      alert("Löschen fehlgeschlagen.");
+    }
   };
 
   return (
@@ -27,7 +35,10 @@ const ConsultantCard = ({ consultant, onAccept, onReject }) => {
         </button>
       </div>
       <div className="consultant-avatar">
-        <img src={consultant.profile_image || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'} alt={consultant.name} />
+        <img
+          src={consultant.profile_image || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'}
+          alt={consultant.name}
+        />
       </div>
 
       <div className="consultant-info">

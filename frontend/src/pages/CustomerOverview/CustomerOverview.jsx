@@ -1,22 +1,35 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import './CustomerOverview.css';
-import { useNavigate } from 'react-router-dom';
-
+import axios from 'axios';
 
 function CustomerOverview() {
-  // Dummy customer data for display
-  const customer = {
-    name: "Acme Corporation",
-    industry: "Technology",
-    location: "Berlin, Germany",
-    number_of_employees: 250,
-    contact_person: "Jane Doe",
-    contact_email: "jane.doe@acmecorp.com",
-    contact_phone: "+49 123 456789",
-    website: "https://www.acmecorp.com"
-  };
-const navigate = useNavigate();
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [customer, setCustomer] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
+  useEffect(() => {
+    const fetchCustomer = async () => {
+      try {
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8002';
+        const response = await axios.get(`${apiUrl}/client/${id}`);
+        setCustomer(response.data);
+        setError(null);
+      } catch (err) {
+        console.error('Fehler beim Laden des Kunden:', err);
+        setError('Kunde nicht gefunden');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCustomer();
+  }, [id]);
+
+  if (loading) return <div className="loading-container">Lade Kundendaten...</div>;
+  if (error) return <div className="error-container">{error}</div>;
 
   return (
     <div className="customer-overview-container">
@@ -38,7 +51,14 @@ const navigate = useNavigate();
           </div>
           <div className="detail-item">
             <span className="detail-label">Website:</span>
-            <a href={customer.website} target="_blank" rel="noopener noreferrer" className="detail-value website-link">{customer.website}</a>
+            <a
+              href={customer.website}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="detail-value website-link"
+            >
+              {customer.website}
+            </a>
           </div>
         </div>
 
@@ -50,11 +70,15 @@ const navigate = useNavigate();
           </div>
           <div className="detail-item">
             <span className="detail-label">Email:</span>
-            <a href={`mailto:${customer.contact_email}`} className="detail-value">{customer.contact_email}</a>
+            <a href={`mailto:${customer.contact_email}`} className="detail-value">
+              {customer.contact_email}
+            </a>
           </div>
           <div className="detail-item">
             <span className="detail-label">Phone:</span>
-            <a href={`tel:${customer.contact_phone}`} className="detail-value">{customer.contact_phone}</a>
+            <a href={`tel:${customer.contact_phone}`} className="detail-value">
+              {customer.contact_phone}
+            </a>
           </div>
         </div>
       </div>

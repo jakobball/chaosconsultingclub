@@ -126,15 +126,16 @@ const OneProject = () => {
     try {
       const consultantResponse = await axios.get(`${apiUrl}/consultant/get/${entry.consultant_id}`);
       const data = consultantResponse.data;
+return {
+  id: data.id,
+  name: data.name,
+  role: entry.requirement_level || data.title || 'Consultant',
+  experience: `${entry.score || 0}/10 MatchPoint`,
+  skills: Array.isArray(data.technologies) ? data.technologies : [],
+  profileImage: data.profileImage || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png',
+  project_id: id // ← hier hinzufügen
+};
 
-      return {
-        id: data.id,
-        name: data.name,
-        role: entry.requirement_level || data.title || 'Consultant',
-        experience: `${entry.score || 0}/10 MatchPoint`,
-        skills: Array.isArray(data.technologies) ? data.technologies : [],
-        profileImage: data.profileImage || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
-      };
     } catch (e) {
       console.warn(`Consultant #${entry.consultant_id} not found:`, e.message);
       return {
