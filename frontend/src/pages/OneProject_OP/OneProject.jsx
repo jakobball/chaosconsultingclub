@@ -207,7 +207,7 @@ const handleAddConsultant = async (e) => {
 
       if (!response.ok) throw new Error("Suggestion creation failed");
 
-      alert(`Consultant "${newConsultant}" wurde übermittelt`);
+      window.location.reload();
       setNewConsultant('');
     } catch (error) {
       console.error('Fehler beim Senden der Consultant-Anfrage:', error);
