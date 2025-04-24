@@ -13,6 +13,13 @@ from routes import project_ressource
 from routes import consultant_ressource
 from config.db import Base, engine
 from models import *
+# ALT (funktioniert lokal)
+from routes import recommendation_ressource, client_ressource
+
+# NEU (funktioniert auf Render)
+from backend.routes import recommendation_ressource, client_ressource
+from backend.routes import project_ressource
+from backend.routes import consultant_ressource
 
 Base.metadata.create_all(bind=engine)
 
